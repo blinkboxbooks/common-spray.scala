@@ -1,9 +1,6 @@
 package com.blinkbox.books.spray
 
-import org.json4s._
-import org.json4s.native.Serialization
-import org.json4s.native.Serialization.{ read, write }
-import org.scalatest.mock.MockitoSugar
+import org.json4s.native.Serialization.{read, write}
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner

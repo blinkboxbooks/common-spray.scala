@@ -14,10 +14,7 @@ libraryDependencies ++= {
   val akkaV = "2.3.2"
   val sprayV = "1.3.1"
   val json4sV = "3.2.9"
-  val solrV = "4.8.0"
   Seq(
-    "org.slf4j"           %   "slf4j-log4j12"   % "1.7.5",
-    "log4j"               %   "log4j"           % "1.2.17",
     "io.spray"            %   "spray-can"       % sprayV,
     "io.spray"            %   "spray-routing"   % sprayV,
     "io.spray"            %%  "spray-json"      % "1.2.6",
@@ -31,9 +28,3 @@ libraryDependencies ++= {
     "com.novocode"        %   "junit-interface" % "0.10" % "test"
   )
 }
-
-// Add Mobcast Releases to resolvers
-resolvers += "Sonatype Nexus Repository Manager" at "http://nexus.mobcast.co.uk/nexus/content/repositories/releases"
-
-// Pick up login credentials for Nexus from user's directory
-credentials += Credentials(Path.userHome / ".sbt" / ".nexus")
