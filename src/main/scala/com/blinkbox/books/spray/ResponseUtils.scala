@@ -1,4 +1,4 @@
-package com.blinkbox.books.common.spray
+package com.blinkbox.books.spray
 
 object ResponseUtils {
 
@@ -10,26 +10,26 @@ object ResponseUtils {
   /**
    * Generate links for use in paged results.
    *
-   * @param numberOfResults the number of total results that exist. If present, this will
+   * @param numberOfResults The number of total results that exist. If present, this will
    * be used to decide whether to generate a "next" link or not. If not present, the "next" link
    * will always be generated.
-   *
+   * @param offset The current offset into the results list.
+   * @param count The number of results in a page.
    */
-  def links(numberOfResults: Option[Long], offset: Long, count: Long,
+  def links(numberOfResults: Option[Int], offset: Int, count: Int,
     linkBaseUrl: String, includeSelf: Boolean = true): Seq[PageLink] = {
 
-    val thisPageLink = s"$linkBaseUrl?count=$count&offset=$offset"
-    val thisPage = if (includeSelf) Some(PageLink("this", thisPageLink)) else None
+    val thisPage = if (includeSelf) {
+      val link = s"$linkBaseUrl?count=$count&offset=$offset"
+      Some(PageLink("this", link))
+    } else None
 
     val previousPage = if (offset > 0) {
       val link = s"$linkBaseUrl?count=$count&offset=${(offset - count).max(0)}"
       Some(PageLink("prev", link))
     } else None
 
-    val hasMore = numberOfResults match {
-      case None => true
-      case Some(number) => number > offset + count
-    }
+    val hasMore = numberOfResults.fold(true)(_ > offset + count)
     val nextPage = if (hasMore) {
       val link = s"$linkBaseUrl?count=$count&offset=${offset + count}"
       Some(PageLink("next", link))

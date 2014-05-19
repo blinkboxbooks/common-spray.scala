@@ -1,4 +1,4 @@
-package com.blinkbox.books.common.spray
+package com.blinkbox.books.spray
 
 import org.json4s._
 import org.json4s.native.Serialization

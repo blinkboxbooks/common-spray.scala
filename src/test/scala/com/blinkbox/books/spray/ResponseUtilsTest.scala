@@ -1,11 +1,11 @@
-package com.blinkbox.books.common.spray
+package com.blinkbox.books.spray
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.junit.JUnitRunner
 
-import com.blinkbox.books.common.spray.ResponseUtils._
+import com.blinkbox.books.spray.ResponseUtils._
 
 @RunWith(classOf[JUnitRunner])
 class ResponseUtilsTest extends FunSuite with MockitoSugar {

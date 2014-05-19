@@ -1,4 +1,4 @@
-package com.blinkbox.books.common.spray
+package com.blinkbox.books.spray
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
