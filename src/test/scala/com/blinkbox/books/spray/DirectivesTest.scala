@@ -1,14 +1,11 @@
-package com.blinkbox.books.common.spray
+package com.blinkbox.books.spray
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import spray.http.StatusCodes._
-import spray.routing.{ ExceptionHandler, HttpService, HttpServiceActor, Route }
+import spray.routing.{HttpService, Route}
 import spray.testkit.ScalatestRouteTest
-import akka.actor.Actor
-import spray.routing.RoutingSettings
-import shapeless.get
 
 /**
  * A trait that contains a route using the 'paged' directive.
