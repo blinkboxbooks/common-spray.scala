@@ -25,5 +25,5 @@ object Paging {
     Seq(thisPage, prevPage, nextPage).flatten
   }
 
-  private def optLink(cond: Boolean, link: => PageLink) = if (cond) { Some(link) } else None
+  private def optLink(cond: Boolean, link: => PageLink) = if (cond) Some(link) else None
 }
