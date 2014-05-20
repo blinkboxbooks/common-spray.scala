@@ -2,7 +2,7 @@ name := "common-spray"
 
 organization := "com.blinkbox.books"
 
-version := "0.1.0"
+version := scala.io.Source.fromFile("VERSION").mkString.trim
 
 scalaVersion  := "2.10.4"
 
