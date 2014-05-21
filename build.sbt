@@ -23,6 +23,8 @@ libraryDependencies ++= {
     "com.typesafe.akka"   %%  "akka-testkit"    % akkaV   % "test",
     "org.scalatest"       %%  "scalatest"       % "2.1.4" % "test",
     "org.json4s"          %%  "json4s-native"   % json4sV,
+    "joda-time"           %   "joda-time"       % "2.3",
+    "org.joda"            %   "joda-convert"    % "1.6",
     "org.mockito"         %   "mockito-core"    % "1.9.5" % "test",
     "junit"               %   "junit"           % "4.11" % "test",
     "com.novocode"        %   "junit-interface" % "0.10" % "test"
