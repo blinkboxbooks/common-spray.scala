@@ -2,7 +2,7 @@ name := "common-spray"
 
 organization := "com.blinkbox.books"
 
-version := "0.1.0"
+version := scala.util.Try(scala.io.Source.fromFile("VERSION").mkString.trim).getOrElse("0.0.0")
 
 scalaVersion  := "2.10.4"
 
@@ -23,6 +23,8 @@ libraryDependencies ++= {
     "com.typesafe.akka"   %%  "akka-testkit"    % akkaV   % "test",
     "org.scalatest"       %%  "scalatest"       % "2.1.4" % "test",
     "org.json4s"          %%  "json4s-native"   % json4sV,
+    "joda-time"           %   "joda-time"       % "2.3",
+    "org.joda"            %   "joda-convert"    % "1.6",
     "org.mockito"         %   "mockito-core"    % "1.9.5" % "test",
     "junit"               %   "junit"           % "4.11" % "test",
     "com.novocode"        %   "junit-interface" % "0.10" % "test"
