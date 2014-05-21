@@ -43,8 +43,7 @@ object JsonFormats {
     case JString(s) => ISODateTimeFormat.dateTime().parseDateTime(s)
     case JNull => null
   }, {
-    case d: DateTime =>
-      JString(ISODateTimeFormat.dateTime().print(d))
+    case d: DateTime => JString(ISODateTimeFormat.dateTime().print(d))
   }))
 
   /**
@@ -73,7 +72,7 @@ trait Version1JsonSupport {
 
   implicit def version1JsonUnmarshaller[T: Manifest] =
     Unmarshaller[T](`application/vnd.blinkboxbooks.data.v1+json`) {
-      case x: HttpEntity.NonEmpty ⇒
+      case x: HttpEntity.NonEmpty =>
         try Serialization.read[T](x.asString(defaultCharset = HttpCharsets.`UTF-8`))
         catch {
           case MappingException("unknown error", ite: InvocationTargetException) => throw ite.getCause
