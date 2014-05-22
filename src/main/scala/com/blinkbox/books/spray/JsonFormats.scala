@@ -5,7 +5,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 import org.json4s._
 import org.json4s.JsonAST.{JNull, JString}
-import org.json4s.native.Serialization
+import org.json4s.jackson.Serialization
 import spray.http._
 import spray.httpx.unmarshalling.Unmarshaller
 import spray.httpx.marshalling.Marshaller
