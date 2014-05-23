@@ -11,7 +11,7 @@ import spray.testkit.ScalatestRouteTest
 import scala.util.Try
 
 /**
- * A trait that contains a route using the 'paged' directive.
+ * A trait that contains a route using the 'cacheable' directive.
  */
 private[spray] trait CacheableService extends HttpService with Directives {
 
