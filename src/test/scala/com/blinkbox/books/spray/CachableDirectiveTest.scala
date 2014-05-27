@@ -27,6 +27,9 @@ private[spray] trait CacheableService extends HttpService with Directives {
     } ~
       path("nonCacheableEndpoint") {
         complete(OK)
+      } ~
+      path("cacheableCompletedEndpoint") {
+        cacheable(maxAge, OK)
       }
   }
 }
@@ -47,12 +50,23 @@ class CacheableDirectiveTest extends FunSuite with ScalatestRouteTest with Cache
     }
   }
 
+  test("Response headers when completing cacheable object") {
+    val start = DateTime.now
+    Get("/cacheableCompletedEndpoint") ~> route ~> check {
+      assert(status === OK)
+      assert(header("Cache-Control").get.value === s"public, max-age=${maxAge.toSeconds}")
+
+      val expiryTimeStr = header("Expires").get.value
+      assert(parseDateTime(expiryTimeStr).isSuccess, "Should have set expiry time in the valid format")
+    }
+  }
+
   test("Response headers are updated dynamically") {
     Get("/cacheableEndpoint") ~> route ~> check {
       val time1 = parseDateTime(header("Expires").get.value).get
 
       // Sleep for a second, to ensure date header will be updated.
-      Thread.sleep(2001)
+      Thread.sleep(1001)
       Get("/cacheableEndpoint") ~> route ~> check {
         assert(status === OK)
         val time2 = parseDateTime(header("Expires").get.value).get
@@ -66,7 +80,6 @@ class CacheableDirectiveTest extends FunSuite with ScalatestRouteTest with Cache
       assert(status === OK)
       assert(header("Cache-Control") === None)
       assert(header("Expires") === None)
-      assert(header("Date") === None)
     }
   }
 

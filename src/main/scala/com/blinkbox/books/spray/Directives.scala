@@ -6,8 +6,9 @@ import shapeless._
 import spray.http.DateTime
 import spray.http.HttpHeaders._
 import spray.http.CacheDirectives._
-import spray.routing.Directive1
-import spray.routing.HttpService
+import spray.routing.{ Directive0, Directive1, HttpService }
+import spray.httpx.marshalling.ToResponseMarshallable
+import spray.routing.StandardRoute
 
 case class Page(offset: Int, count: Int) {
   require(offset >= 0, "Offset must be 0 or greater")
@@ -31,8 +32,15 @@ trait Directives {
    */
   def cacheable(maxAge: Duration) = provideTimeNow.flatMap { now => withCacheHeaders(now, maxAge) }
 
+  /**
+   * Directive for completing request while also setting cache headers for the result.
+   *
+   * @param maxAge  The duration for which the returned value is cacheable.
+   */
+  def cacheable(maxAge: Duration, response: => ToResponseMarshallable): StandardRoute = cacheable(maxAge) & complete(response)
+
   /** Get the current time, evaluated on each invocation of the directive. */
-  private def provideTimeNow: Directive1[DateTime] = extract(ctx => DateTime.now)
+  private def provideTimeNow: Directive1[DateTime] = extract(_ => DateTime.now)
 
   /** Set cache headers. */
   private def withCacheHeaders(now: DateTime, maxAge: Duration) = respondWithHeaders(
