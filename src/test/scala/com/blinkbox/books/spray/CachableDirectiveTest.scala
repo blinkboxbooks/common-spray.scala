@@ -4,11 +4,11 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import scala.concurrent.duration._
+import scala.util.Try
 import spray.http.DateTime
 import spray.http.StatusCodes._
 import spray.routing.{ HttpService, Route }
 import spray.testkit.ScalatestRouteTest
-import scala.util.Try
 
 /**
  * A trait that contains a route using the 'cacheable' directive.
