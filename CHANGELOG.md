@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.4.0 ([#5](https://git.mobcastdev.com/Platform/common-spray/pull/5) 2014-05-23 16:45:47)
+
+Added directive for setting standard cache headers on cached resources
+
+### New features
+
+* Added "cacheable" directive that allows standard cache headers to be set, with a configurable cache expiry time.
+
+
 ## 0.3.0 ([#4](https://git.mobcastdev.com/Platform/common-spray/pull/4) 2014-05-22 14:01:12)
 
 Switched from native JSON library to Jackson
