@@ -1,14 +1,12 @@
 package com.blinkbox.books.spray
 
-import JsonFormats._
 import scala.concurrent.duration.Duration
-import shapeless._
+import spray.http.CacheDirectives._
 import spray.http.DateTime
 import spray.http.HttpHeaders._
-import spray.http.CacheDirectives._
-import spray.routing.{ Directive0, Directive1, HttpService }
 import spray.httpx.marshalling.ToResponseMarshallable
-import spray.routing.StandardRoute
+import spray.routing.Directives._
+import spray.routing.{Directive1, StandardRoute}
 
 case class Page(offset: Int, count: Int) {
   require(offset >= 0, "Offset must be 0 or greater")
@@ -16,7 +14,6 @@ case class Page(offset: Int, count: Int) {
 }
 
 trait Directives {
-  this: HttpService =>
 
   /**
    * Custom directive for extracting and validating page parameters (offset and count).
@@ -36,8 +33,27 @@ trait Directives {
    * Directive for completing request while also setting cache headers for the result.
    *
    * @param maxAge  The duration for which the returned value is cacheable.
+   * @param response The response with which to complete the request.
    */
   def cacheable(maxAge: Duration, response: => ToResponseMarshallable): StandardRoute = cacheable(maxAge) & complete(response)
+
+  /**
+   * Directive for setting 'never cache' headers in a standard way.
+   *
+   * This sets time-dependent headers without requiring the use of a surrounding dynamic {} directive.
+   */
+  def neverCache = provideTimeNow flatMap { now => respondWithHeaders(
+    `Cache-Control`(`no-store`),
+    RawHeader("Expires", now.toRfc1123DateTimeString),
+    RawHeader("Pragma", "no-cache"))
+  }
+
+  /**
+   * Directive for completing request while also setting 'never cache' headers for the result.
+   *
+   * @param response The response with which to complete the request.
+   */
+  def uncacheable(response: => ToResponseMarshallable): StandardRoute = neverCache & complete(response)
 
   /** Get the current time, evaluated on each invocation of the directive. */
   private def provideTimeNow: Directive1[DateTime] = extract(_ => DateTime.now)
@@ -48,3 +64,5 @@ trait Directives {
     RawHeader("Expires", (now + maxAge.toMillis).toRfc1123DateTimeString))
 
 }
+
+object Directives extends Directives
