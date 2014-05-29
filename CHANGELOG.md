@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.5.0 ([#6](https://git.mobcastdev.com/Platform/common-spray/pull/6) 2014-05-28 17:38:46)
+
+Added 'do not cache' directives
+
+### New features
+
+- Added `neverCache` and `uncacheable` directives to allow standard ‘do
+not cache’ headers to be set.
+
 ## 0.4.0 ([#5](https://git.mobcastdev.com/Platform/common-spray/pull/5) 2014-05-23 16:45:47)
 
 Added directive for setting standard cache headers on cached resources
