@@ -1,28 +1,14 @@
 package com.blinkbox.books.spray
 
-import java.lang.reflect.InvocationTargetException
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 import org.json4s._
 import org.json4s.JsonAST.{JNull, JString}
-import org.json4s.jackson.Serialization
-import spray.http._
-import spray.httpx.unmarshalling.Unmarshaller
-import spray.httpx.marshalling.Marshaller
 
 /**
  * Definitions for common data formats used in service requests and responses.
  */
 object JsonFormats {
-
-  /**
-   * Common media type.
-   */
-  val `application/vnd.blinkboxbooks.data.v1+json` = MediaTypes.register(MediaType.custom(
-    mainType = "application",
-    subType = "vnd.blinkboxbooks.data.v1+json",
-    binary = true, // binary as the encoding is defined as utf-8 by the json spec
-    compressible = true))
 
   /**
    * Class that allows custom strings to be used as type hints for classes, by passing in a map
@@ -62,23 +48,4 @@ object JsonFormats {
 
 }
 
-import JsonFormats._
 
-/**
- * Configures the JSON support for the blinkbox books v1 media type.
- */
-trait Version1JsonSupport {
-  implicit def version1JsonFormats: Formats = blinkboxFormat()
-
-  implicit def version1JsonUnmarshaller[T: Manifest] =
-    Unmarshaller[T](`application/vnd.blinkboxbooks.data.v1+json`) {
-      case x: HttpEntity.NonEmpty =>
-        try Serialization.read[T](x.asString(defaultCharset = HttpCharsets.`UTF-8`))
-        catch {
-          case MappingException("unknown error", ite: InvocationTargetException) => throw ite.getCause
-        }
-    }
-
-  implicit def version1JsonMarshaller[T <: AnyRef] =
-    Marshaller.delegate[T, String](`application/vnd.blinkboxbooks.data.v1+json`)(Serialization.write(_))
-}
