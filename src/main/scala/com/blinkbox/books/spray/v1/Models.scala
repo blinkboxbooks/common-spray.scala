@@ -9,7 +9,7 @@ case class ListPage[T](
   @(ApiModelProperty @field)(position = 1, value = "The offset this page is into the list") offset: Int,
   @(ApiModelProperty @field)(position = 2, value = "The number of results in this page") count: Int,
   @(ApiModelProperty @field)(position = 3, value = "The items in the page") items: List[T],
-  @(ApiModelProperty @field)(position = 4, value = "Links relating to the list") links: List[Link] = Nil)
+  @(ApiModelProperty @field)(position = 4, value = "Links relating to the list") links: Option[List[Link]] = None)
 
 @ApiModel(description = "A link to another resource")
 case class Link(
