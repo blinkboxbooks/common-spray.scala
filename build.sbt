@@ -25,6 +25,7 @@ libraryDependencies ++= {
     "org.json4s"          %%  "json4s-jackson"  % json4sV,
     "joda-time"           %   "joda-time"       % "2.3",
     "org.joda"            %   "joda-convert"    % "1.6",
+    "com.gettyimages"     %%  "spray-swagger"   % "0.3.3",
     "org.mockito"         %   "mockito-core"    % "1.9.5" % "test",
     "junit"               %   "junit"           % "4.11" % "test",
     "com.novocode"        %   "junit-interface" % "0.10" % "test"
