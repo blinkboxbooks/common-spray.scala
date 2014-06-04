@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.5.1 ([#9](https://git.mobcastdev.com/Platform/common-spray/pull/9) 2014-06-04 12:22:21)
+
+Removed whitespace
+
+### Patch 
+
+Merged the previous pull request too early :eyes: 
+
 ## 0.5.0 ([#6](https://git.mobcastdev.com/Platform/common-spray/pull/6) 2014-05-28 17:38:46)
 
 Added 'do not cache' directives
