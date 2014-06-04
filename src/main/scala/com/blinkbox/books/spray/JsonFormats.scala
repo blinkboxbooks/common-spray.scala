@@ -4,6 +4,8 @@ import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 import org.json4s._
 import org.json4s.JsonAST.{JNull, JString}
+import spray.httpx.unmarshalling.{MalformedContent, FromStringDeserializer}
+import scala.util.control.NonFatal
 
 /**
  * Definitions for common data formats used in service requests and responses.
@@ -31,6 +33,18 @@ object JsonFormats {
   }, {
     case d: DateTime => JString(ISODateTimeFormat.dateTime().print(d))
   }))
+
+  /**
+   * Deserializer to parse BigDecimal values in query parameters
+   */
+  implicit val BigDecimalDeserializer = new FromStringDeserializer[BigDecimal] {
+    def apply(value: String) = {
+      try Right(BigDecimal(value))
+      catch {
+        case NonFatal(ex) => Left(MalformedContent("'%s' is not a valid 128-bit BigDecimal value" format value, ex))
+      }
+    }
+  }
 
   /**
    * Custom JSON format that performs JSON serialisation in a standard way.
