@@ -9,11 +9,10 @@ import spray.httpx.unmarshalling._
 import com.blinkbox.books.spray.v1.Version1JsonSupport
 import JsonFormats.BigDecimalDeserializer
 
-
 trait TestService extends HttpService with Directives with Version1JsonSupport {
 
   def route: Route = get {
-    parameter('amount.as[BigDecimal]) { a => complete(a)}
+    parameter('amount.as[BigDecimal]) { a => complete(a) }
   }
 }
 
@@ -35,7 +34,6 @@ class BigDecimalDeserializerTests extends FunSuite with ScalatestRouteTest with 
   }
 
   test("BigDecimal deserializer rejects invalid value with correct error message") {
-
     val pf: PartialFunction[Rejection, Boolean] = { case  MalformedQueryParamRejection("amount", "'23453f' is not a valid 128-bit BigDecimal value", Some(_)) => true }
 
     Get("/?amount=23453f") ~> route ~> check {
