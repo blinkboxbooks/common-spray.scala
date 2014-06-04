@@ -1,5 +1,36 @@
 # Change Log
 
+## 0.7.1 ([#9](https://git.mobcastdev.com/Platform/common-spray/pull/9) 2014-06-04 12:22:21)
+
+Removed whitespace
+
+### Patch 
+
+Merged the previous pull request too early :eyes:
+
+## 0.7.0 ([#8](https://git.mobcastdev.com/Platform/common-spray/pull/8) 2014-06-04 12:14:00)
+
+Moved v1 JSON support into its own package
+
+### New features
+
+- Added `BigDecimalDeserializer` to allow `BigDecimal` query parameters
+
+## 0.6.0 ([#7](https://git.mobcastdev.com/Platform/common-spray/pull/7) 2014-05-30 12:30:00)
+
+Added BigDecimal deserialiser
+
+### Breaking changes
+
+- The v1-specific JSON support is now in a `v1` sub-package.
+
+### Improvements
+
+- Includes resource models for v1 paged lists, links, images and errors.
+- You can specify `responseTypeHints` on `Version1JsonSupport` for type
+hints that are used only on responses (i.e. if you want to ignore the
+type hint on requests, which you typically do).
+
 ## 0.5.0 ([#6](https://git.mobcastdev.com/Platform/common-spray/pull/6) 2014-05-28 17:38:46)
 
 Added 'do not cache' directives
