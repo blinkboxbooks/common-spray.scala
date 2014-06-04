@@ -50,5 +50,4 @@ class JsonFormatsTest extends FunSuite {
 
     assert(data === deserialised, "Should be able to deserialise object with no defined type hint")
   }
-
 }
