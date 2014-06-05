@@ -16,7 +16,7 @@ Merged the previous pull request too early :eyes:
 
 ## 0.7.0 ([#8](https://git.mobcastdev.com/Platform/common-spray/pull/8) 2014-06-04 12:14:00)
 
-Moved v1 JSON support into its own package
+Added BigDecimal deserialiser
 
 ### New features
 
@@ -24,7 +24,7 @@ Moved v1 JSON support into its own package
 
 ## 0.6.0 ([#7](https://git.mobcastdev.com/Platform/common-spray/pull/7) 2014-05-30 12:30:00)
 
-Added BigDecimal deserialiser
+Moved v1 JSON support into its own package
 
 ### Breaking changes
 
