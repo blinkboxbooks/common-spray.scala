@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.7.2 ([#11](https://git.mobcastdev.com/Platform/common-spray/pull/11) 2014-06-05 12:13:38)
+
+Tiny change to force rebuild, should be published to Artifactory
+
+Patch to update docs, to force a version number increase and rebuild. This is the first version that will be published to Artifactory.
+
 ## 0.7.1 ([#9](https://git.mobcastdev.com/Platform/common-spray/pull/9) 2014-06-04 12:22:21)
 
 Removed whitespace
