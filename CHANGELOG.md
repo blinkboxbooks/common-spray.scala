@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.8.0 ([#13](https://git.mobcastdev.com/Platform/common-spray/pull/13) 2014-06-09 10:12:15)
+
+Convert from Java URI/URL to Spray Uri
+
+### New features
+
+- Defines implicit conversions from the Java `URI` and `URL` classes to
+a Spray `Uri` instance, which is nicer to work when you’re using the
+Spray framework.
+
 ## 0.7.2 ([#11](https://git.mobcastdev.com/Platform/common-spray/pull/11) 2014-06-05 12:13:38)
 
 Tiny change to force rebuild, should be published to Artifactory
