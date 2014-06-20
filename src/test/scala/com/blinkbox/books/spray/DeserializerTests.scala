@@ -17,9 +17,9 @@ trait TestService extends HttpService with Directives with Version1JsonSupport {
       path("bigdecimal") {
         parameter('amount.as[BigDecimal])(complete(_))
       } ~
-        path("datetime") {
-          parameter('value.as[DateTime])(complete(_))
-        }
+      path("datetime") {
+        parameter('value.as[DateTime])(complete(_))
+      }
     }
   }
 }
