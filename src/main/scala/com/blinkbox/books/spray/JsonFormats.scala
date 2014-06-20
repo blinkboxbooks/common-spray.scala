@@ -2,9 +2,10 @@ package com.blinkbox.books.spray
 
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
-import org.json4s._
 import org.json4s.JsonAST.{JNull, JString}
-import spray.httpx.unmarshalling.{MalformedContent, FromStringDeserializer}
+import org.json4s._
+import spray.httpx.unmarshalling.{FromStringDeserializer, MalformedContent}
+
 import scala.util.control.NonFatal
 
 /**
@@ -38,12 +39,22 @@ object JsonFormats {
    * Deserializer to parse BigDecimal values in query parameters
    */
   implicit val BigDecimalDeserializer = new FromStringDeserializer[BigDecimal] {
-    def apply(value: String) = {
+    def apply(value: String) =
       try Right(BigDecimal(value))
       catch {
         case NonFatal(ex) => Left(MalformedContent("'%s' is not a valid 128-bit BigDecimal value" format value, ex))
       }
-    }
+  }
+
+  /**
+   * Deserializer to parse Joda DateTime values in query parameters
+   */
+  implicit val ISODateTimeDeserializer = new FromStringDeserializer[DateTime] {
+    def apply(value: String) =
+      try Right(ISODateTimeFormat.dateTimeNoMillis().parseDateTime(value))
+      catch {
+        case NonFatal(ex) => Left(MalformedContent("'%s' is not a valid yyyy-MM-dd'T'HH:mm:ss'Z date format value" format value, ex))
+      }
   }
 
   /**
@@ -61,5 +72,3 @@ object JsonFormats {
   } + ISODateTimeSerializer
 
 }
-
-
