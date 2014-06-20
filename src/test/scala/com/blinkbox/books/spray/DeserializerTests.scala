@@ -51,9 +51,8 @@ class DeserializerTests extends FunSuite with ScalatestRouteTest with PartialFun
   }
 
   test("deserialises DateTime from query parameter") {
-    val dateStr = "2014-05-17T14:00:05Z"
-    Get(s"/datetime?value=$dateStr") ~> route ~> check {
-      assert(responseAs[DateTime] === ISODateTimeFormat.dateTimeNoMillis().parseDateTime(dateStr))
+    Get(s"/datetime?value=2014-05-17T14:00:05Z") ~> route ~> check {
+      assert(responseAs[DateTime] === ISODateTimeFormat.dateTimeNoMillis().parseDateTime("2014-05-17T14:00:05Z"))
     }
   }
 
