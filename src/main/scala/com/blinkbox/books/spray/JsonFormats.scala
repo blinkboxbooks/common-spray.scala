@@ -47,6 +47,18 @@ object JsonFormats {
   }
 
   /**
+   * Deserializer to parse Joda DateTime values in query parameters
+   */
+  implicit val ISODateTimeDeserializer = new FromStringDeserializer[DateTime] {
+    def apply(value: String) = {
+      try Right(ISODateTimeFormat.dateTimeNoMillis().parseDateTime(value))
+      catch {
+        case NonFatal(ex) => Left(MalformedContent("'%s' is not a valid yyyy-MM-dd'T'HH:mm:ss'Z date format value" format value, ex))
+      }
+    }
+  }
+
+  /**
    * Custom JSON format that performs JSON serialisation in a standard way.
    *
    * This format names the type hint field as "type".
