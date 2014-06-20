@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.8.1 ([#14](https://git.mobcastdev.com/Platform/common-spray/pull/14) 2014-06-20 11:07:06)
+
+ISODateTimeDeserializer
+
+### Improvements
+
+* Added ISODateTimeDeserializer for Joda DateTime query parameters
+* Refactored BigDecimalDeserializer tests
+
 ## 0.8.0 ([#13](https://git.mobcastdev.com/Platform/common-spray/pull/13) 2014-06-09 10:12:15)
 
 Convert from Java URI/URL to Spray Uri
