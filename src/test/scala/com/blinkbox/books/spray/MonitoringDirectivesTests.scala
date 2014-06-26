@@ -121,7 +121,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
 
     Get("/path?q=1") ~> `X-Forwarded-For`("192.168.1.1", "192.168.1.2") ~> { monitor() { complete(OK) } } ~> check {
       val mdc = mdcRef.get()
-      assert(mdc.get("httpClientIP") == "192.168.1.2")
+      assert(mdc.get("httpClientIP") == "192.168.1.1")
     }
   }
 
