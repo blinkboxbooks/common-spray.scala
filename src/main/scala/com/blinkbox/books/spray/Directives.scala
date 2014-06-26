@@ -13,7 +13,7 @@ case class Page(offset: Int, count: Int) {
   require(count > 0, "Count must be greater than 0")
 }
 
-trait Directives extends DebuggingDirectives {
+trait Directives extends MonitoringDirectives {
 
   /**
    * Custom directive for extracting and validating page parameters (offset and count).
