@@ -51,9 +51,9 @@ trait MonitoringDirectives {
    * it is reset correctly around the receive of each message.
    *
    * To ensure that the response is logged correctly this directive will convert any rejections
-   * into an `HttpResponse` using the implicitly available `RejectionHandler`, meaning that no
-   * subsequent processing of rejections can occur. This shouldn't be a problem as this directive
-   * should be the outermost one after `runRoute` when constructing routes.
+   * into an `HttpResponse` using the default `RejectionHandler`, meaning that no subsequent
+   * processing of rejections can occur. This shouldn't be a problem as this directive should be
+   * the outermost one after `runRoute` when constructing routes.
    *
    * Note that if the route terminates by throwing an exception then it will not be logged by this
    * directive. To ensure that all exception responses are correctly returned you should use the
@@ -96,7 +96,7 @@ trait MonitoringDirectives {
       }
       response
     }
-  } & handleRejections(implicitly[RejectionHandler])
+  } & handleRejections(RejectionHandler.Default)
 }
 
 object MonitoringDirectives extends MonitoringDirectives
