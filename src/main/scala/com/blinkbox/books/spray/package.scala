@@ -11,7 +11,7 @@ package object spray {
   implicit def url2uri(url: URL) = Uri(url.toString)
 
   /**
-   * Adds functionality to a [[_root_.spray.http.HttpRequest]].
+   * Adds functionality to a `HttpRequest`.
    * @param request The request.
    */
   implicit class RichHttpRequest(request: HttpRequest) {
