@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.9.1 ([#16](https://git.mobcastdev.com/Platform/common-spray/pull/16) 2014-06-27 12:47:47)
+
+monitor directive now handles exceptions
+
+### Improvements
+
+- The `monitor` directive now handles any unhandled exceptions using
+the default logic so that all requests are logged irrespective or
+whether they finish successfully, with a rejection, or with an
+exception.
+
 ## 0.9.0 ([#15](https://git.mobcastdev.com/Platform/common-spray/pull/15) 2014-06-26 15:49:50)
 
 Diagnostics
