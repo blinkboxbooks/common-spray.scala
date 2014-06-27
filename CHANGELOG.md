@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.9.0 ([#15](https://git.mobcastdev.com/Platform/common-spray/pull/15) 2014-06-26 15:49:50)
+
+Diagnostics
+
+### New features
+
+- Added a new `monitor()` directive which adds MDC context about the request and logs basic details of the request and response.
+- Added a `clientIP` function to `HttpRequest`.
+
 ## 0.8.1 ([#14](https://git.mobcastdev.com/Platform/common-spray/pull/14) 2014-06-20 11:07:06)
 
 ISODateTimeDeserializer
