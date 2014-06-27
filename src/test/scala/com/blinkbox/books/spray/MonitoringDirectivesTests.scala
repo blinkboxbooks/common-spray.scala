@@ -18,10 +18,10 @@ import spray.testkit.ScalatestRouteTest
 
 class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with MockitoSugar with MonitoringDirectives {
 
-  test("monitor logs a debug message with the HTTP endpoint, status and duration for successful requests") {
+  test("monitor logs an info message with the HTTP endpoint, status and duration for successful requests") {
     val messageRef = new AtomicReference[String]()
     implicit val log = mock[Logger]
-    when(log.debug(any(classOf[String]))).thenAnswer(new Answer[Unit] {
+    when(log.info(any(classOf[String]))).thenAnswer(new Answer[Unit] {
       override def answer(invocation: InvocationOnMock): Unit = {
         messageRef.set(invocation.getArguments.head.asInstanceOf[String])
       }
@@ -78,7 +78,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
   test("monitor adds key HTTP properties to the MDC context") {
     val mdcRef = new AtomicReference[java.util.Map[_, _]]()
     implicit val log = mock[Logger]
-    when(log.debug(any(classOf[String]))).thenAnswer(new Answer[Unit] {
+    when(log.info(any(classOf[String]))).thenAnswer(new Answer[Unit] {
       override def answer(invocation: InvocationOnMock): Unit = {
         mdcRef.set(MDC.getCopyOfContextMap)
       }
@@ -97,7 +97,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
   test("monitor adds the client IP if the Remote-Address header is valid") {
     val mdcRef = new AtomicReference[java.util.Map[_, _]]()
     implicit val log = mock[Logger]
-    when(log.debug(any(classOf[String]))).thenAnswer(new Answer[Unit] {
+    when(log.info(any(classOf[String]))).thenAnswer(new Answer[Unit] {
       override def answer(invocation: InvocationOnMock): Unit = {
         mdcRef.set(MDC.getCopyOfContextMap)
       }
@@ -112,7 +112,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
   test("monitor does not cause the request to fail if the Remote-Address header is invalid") {
     val mdcRef = new AtomicReference[java.util.Map[_, _]]()
     implicit val log = mock[Logger]
-    when(log.debug(any(classOf[String]))).thenAnswer(new Answer[Unit] {
+    when(log.info(any(classOf[String]))).thenAnswer(new Answer[Unit] {
       override def answer(invocation: InvocationOnMock): Unit = {
         mdcRef.set(MDC.getCopyOfContextMap)
       }
@@ -127,7 +127,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
   test("monitor adds the client IP if the X-Forwarded-For header is valid") {
     val mdcRef = new AtomicReference[java.util.Map[_, _]]()
     implicit val log = mock[Logger]
-    when(log.debug(any(classOf[String]))).thenAnswer(new Answer[Unit] {
+    when(log.info(any(classOf[String]))).thenAnswer(new Answer[Unit] {
       override def answer(invocation: InvocationOnMock): Unit = {
         mdcRef.set(MDC.getCopyOfContextMap)
       }
@@ -142,7 +142,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
   test("monitor does not cause the request to fail if the X-Forwarded-For header is invalid") {
     val mdcRef = new AtomicReference[java.util.Map[_, _]]()
     implicit val log = mock[Logger]
-    when(log.debug(any(classOf[String]))).thenAnswer(new Answer[Unit] {
+    when(log.info(any(classOf[String]))).thenAnswer(new Answer[Unit] {
       override def answer(invocation: InvocationOnMock): Unit = {
         mdcRef.set(MDC.getCopyOfContextMap)
       }
