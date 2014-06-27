@@ -61,6 +61,20 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
     }
   }
 
+  test("monitor logs an error message with the HTTP endpoint, status and duration when an exception is thrown") {
+    val messageRef = new AtomicReference[String]()
+    implicit val log = mock[Logger]
+    when(log.error(any(classOf[String]))).thenAnswer(new Answer[Unit] {
+      override def answer(invocation: InvocationOnMock): Unit = {
+        messageRef.set(invocation.getArguments.head.asInstanceOf[String])
+      }
+    })
+
+    Get("/path?q=1") ~> { monitor() { dynamic { throw new Exception("o noes!") } } } ~> check {
+      assert(messageRef.get() matches "GET /path returned 500 Internal Server Error in [0-9]+ms")
+    }
+  }
+
   test("monitor adds key HTTP properties to the MDC context") {
     val mdcRef = new AtomicReference[java.util.Map[_, _]]()
     implicit val log = mock[Logger]

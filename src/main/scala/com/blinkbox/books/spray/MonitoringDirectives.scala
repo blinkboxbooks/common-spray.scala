@@ -1,7 +1,9 @@
 package com.blinkbox.books.spray
 
 import org.slf4j.{Logger, MDC}
-import spray.http.StatusCodes.{ClientError, ServerError}
+import scala.util.control.NonFatal
+import spray.http.{RequestProcessingException, IllegalRequestException}
+import spray.http.StatusCodes._
 import spray.routing.{Directive0, ExceptionHandler, RejectionHandler}
 import spray.routing.directives.{BasicDirectives, ExecutionDirectives}
 
@@ -13,14 +15,14 @@ trait MonitoringDirectives {
   import ExecutionDirectives._
 
   /**
-   * A magnet to bind to a [[org.slf4j.Logger]] using implicit conversions.
+   * A magnet to bind to an SLF4J `Logger` using implicit conversions.
    *
-   * It may not be obvious why we're not using the standard [[spray.util.LoggingContext]] but instead
-   * a regular `Logger`. This is because we want to use MDC, and the MDC implementation in Akka logging
-   * (on which `LoggingContext` depends) is very tightly bound to Akka's concept of the current message.
-   * This concept falls down when trying to work at a higher level with spray routing directives where
-   * it isn't possible to override the `mdc` method in any reasonable manner as you tend to be acting on
-   * behaviour triggered by the message rather than on properties of the message itself.
+   * It may not be obvious why we're using a regular `Logger` instead of the standard spray `LoggingContext`.
+   * This is because we want to use MDC, and the MDC implementation in Akka logging (on which `LoggingContext`
+   * depends) is very tightly bound to Akka's concept of the current message. This concept falls down when
+   * trying to work at a higher level with spray routing directives where it isn't possible to override the
+   * `mdc` method in any reasonable manner as you tend to be acting on behaviour triggered by the message
+   * rather than on properties of the message itself.
    *
    * It's not ideal by any means, but unfortunately logging with MDC lives on the boundary where high
    * level abstractions of asynchronous work meet the harsh reality of machine threads and this seems
@@ -51,13 +53,10 @@ trait MonitoringDirectives {
    * it is reset correctly around the receive of each message.
    *
    * To ensure that the response is logged correctly this directive will convert any rejections
-   * into an `HttpResponse` using the default `RejectionHandler`, meaning that no subsequent
-   * processing of rejections can occur. This shouldn't be a problem as this directive should be
-   * the outermost one after `runRoute` when constructing routes.
-   *
-   * Note that if the route terminates by throwing an exception then it will not be logged by this
-   * directive. To ensure that all exception responses are correctly returned you should use the
-   * `handleExceptions` directive immediately inside this one with your chosen exception handler.
+   * or exceptions into an `HttpResponse` using the default `RejectionHandler` and `ExceptionHandler`
+   * implementations, meaning that no subsequent processing of rejections or exceptions can occur.
+   * This shouldn't be a problem as this directive should be the outermost one after `runRoute` when
+   * constructing routes.
    *
    * An example of usage is below. Note that the brackets are required after the directive even
    * when using an implicit logger to prevent the inner route being interpreted as an attempt to
@@ -69,15 +68,23 @@ trait MonitoringDirectives {
    *
    *    def receive = runRoute {
    *      monitor() {
-   *        handleExceptions(ExceptionHandler.default) {
-   *          complete(OK) // do something more useful here
-   *        }
+   *        complete(OK) // do something more useful here
    *      }
    *    }
    *  }
    * }}}
    */
-  def monitor(magnet: LoggerMagnet): Directive0 = mapRequestContext { ctx =>
+  def monitor(magnet: LoggerMagnet): Directive0 =
+    logRequestResponseDetails(magnet.log) &
+    handleExceptions(monitorExceptionHandler(magnet.log)) &
+    handleRejections(RejectionHandler.Default)
+
+  // this directive is built around mapRequestContext/withHttpResponseMapped to ensure that the
+  // timing information is correct. if you use logRequestResponse you don't get the 'before'
+  // hook, and if you use mapInnerRoute which might seem like the more obvious choice then you
+  // don't necessarily get the 'after' hook running at the right time as it seems that spray can
+  // sometimes optimise the transformation and run it before the response actually completes.
+  private def logRequestResponseDetails(log: Logger): Directive0 = mapRequestContext { ctx =>
     val request = ctx.request
     MDC.put("httpMethod", request.method.name)
     MDC.put("httpPath", request.uri.path.toString())
@@ -90,13 +97,27 @@ trait MonitoringDirectives {
       MDC.put("httpDuration", duration.toString)
       val message = s"${request.method} ${request.uri.path} returned ${response.status} in ${duration}ms"
       response.status match {
-        case ServerError(_) => magnet.log.error(message)
-        case ClientError(_) => magnet.log.warn(message)
-        case _ => magnet.log.debug(message)
+        case ServerError(_) => log.error(message)
+        case ClientError(_) => log.warn(message)
+        case _ => log.info(message)
       }
       response
     }
-  } & handleRejections(RejectionHandler.Default)
+  }
+
+  // an exception handler based on the default exception handler logic, but which uses the standard
+  // logger rather than LoggingContext so that the MDC information is logged with the error.
+  private def monitorExceptionHandler(log: Logger) = ExceptionHandler {
+    case e: IllegalRequestException => ctx =>
+      log.warn("Illegal request", e)
+      ctx.complete(e.status, Option.empty[String])
+    case e: RequestProcessingException => ctx =>
+      log.error("Failed to process request", e)
+      ctx.complete(e.status, Option.empty[String])
+    case NonFatal(e) => ctx =>
+      log.error("Unexpected error processing request", e)
+      ctx.complete(InternalServerError, Option.empty[String])
+  }
 }
 
 object MonitoringDirectives extends MonitoringDirectives
