@@ -2,13 +2,12 @@ package com.blinkbox.books.spray
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
-import org.scalatest.mock.MockitoSugar
 import org.scalatest.junit.JUnitRunner
 
 import com.blinkbox.books.spray.Paging._
 
 @RunWith(classOf[JUnitRunner])
-class PagingTest extends FunSuite with MockitoSugar {
+class PagingTest extends FunSuite {
 
   val baseUrl = "/my/base/url"
 
