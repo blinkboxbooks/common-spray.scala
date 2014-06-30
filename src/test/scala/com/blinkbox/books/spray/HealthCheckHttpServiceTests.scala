@@ -10,6 +10,7 @@ import org.scalatest.mock.MockitoSugar
 import spray.http.CacheDirectives._
 import spray.http.HttpHeaders._
 import spray.http.MediaTypes._
+import spray.http.StatusCodes._
 import spray.http.Uri.Path
 import spray.testkit.ScalatestRouteTest
 
@@ -20,7 +21,7 @@ class HealthCheckHttpServiceTests extends FunSuite with ScalatestRouteTest with 
       override implicit def actorRefFactory = ActorSystem("test")
       override val basePath = Path("/")
     }
-    Get("/healthcheck") ~> service.routes ~> check {
+    Get("/health/report") ~> service.routes ~> check {
       assert(contentType.mediaType == `application/json`)
     }
   }
@@ -30,7 +31,7 @@ class HealthCheckHttpServiceTests extends FunSuite with ScalatestRouteTest with 
       override implicit def actorRefFactory = ActorSystem("test")
       override val basePath = Path("/")
     }
-    Get("/healthcheck") ~> service.routes ~> check {
+    Get("/health/report") ~> service.routes ~> check {
       assert(header[`Cache-Control`] == Some(`Cache-Control`(`no-store`)))
     }
   }
@@ -43,7 +44,8 @@ class HealthCheckHttpServiceTests extends FunSuite with ScalatestRouteTest with 
       override implicit def actorRefFactory = ActorSystem("test")
       override val basePath = Path("/")
     }
-    Get("/healthcheck") ~> service.routes ~> check {
+    Get("/health/report") ~> service.routes ~> check {
+      assert(status == OK)
       val json = parse(body.asString)
       assert((json \\ "good" \\ "healthy") == JBool(true))
       assert((json \\ "good" \\ "message") == JString("A message!"))
@@ -58,10 +60,21 @@ class HealthCheckHttpServiceTests extends FunSuite with ScalatestRouteTest with 
       override implicit def actorRefFactory = ActorSystem("test")
       override val basePath = Path("/")
     }
-    Get("/healthcheck") ~> service.routes ~> check {
+    Get("/health/report") ~> service.routes ~> check {
+      assert(status == InternalServerError)
       val json = parse(body.asString)
       assert((json \\ "bad" \\ "healthy") == JBool(false))
       assert((json \\ "bad" \\ "message") == JString("A sad message :-("))
+    }
+  }
+
+  test("Can be mounted at non-root URLs") {
+    val service = new HealthCheckHttpService {
+      override implicit def actorRefFactory = ActorSystem("test")
+      override val basePath = Path("/some/root")
+    }
+    Get("/some/root/health/report") ~> service.routes ~> check {
+      assert(contentType.mediaType == `application/json`)
     }
   }
   

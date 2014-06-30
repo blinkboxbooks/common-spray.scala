@@ -1,12 +1,14 @@
 package com.blinkbox.books.spray
 
 import scala.concurrent.duration.Duration
+import shapeless.HNil
 import spray.http.CacheDirectives._
 import spray.http.DateTime
 import spray.http.HttpHeaders._
+import spray.http.Uri.Path
 import spray.httpx.marshalling.ToResponseMarshallable
+import spray.routing._
 import spray.routing.Directives._
-import spray.routing.{Directive1, StandardRoute}
 
 case class Page(offset: Int, count: Int) {
   require(offset >= 0, "Offset must be 0 or greater")
@@ -14,6 +16,14 @@ case class Page(offset: Int, count: Int) {
 }
 
 trait Directives extends MonitoringDirectives {
+
+  /**
+   * Matches the root path of a service.
+   * @param path The path to match.
+   */
+  def rootPath(path: Path): Directive0 =
+    if (path.isEmpty || (path.startsWithSlash && path.length == 1)) pass
+    else rawPathPrefix(PathMatcher[HNil](path, HNil))
 
   /**
    * Custom directive for extracting and validating page parameters (offset and count).

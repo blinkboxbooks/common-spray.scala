@@ -6,13 +6,14 @@ import com.codahale.metrics.health.{HealthCheck, HealthCheckRegistry}
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck
 import java.util.concurrent.ExecutorService
 import org.json4s.jackson.JsonMethods._
-import shapeless.HNil
+import shapeless.{HList, HNil}
 import spray.http.MediaTypes._
 import spray.http.StatusCodes._
 import spray.http.Uri
-import spray.routing.{PathMatcher, Route, HttpService}
+import spray.routing._
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext
+import spray.http.Uri.Path
 
 private object HealthCheckHttpService {
   mapper.registerModule(new HealthCheckModule())
@@ -34,8 +35,8 @@ trait HealthCheckHttpService extends HttpService with Directives {
   }
 
   lazy val routes: Route = get {
-    rawPathPrefix(PathMatcher[HNil](basePath, HNil)) {
-      pathSuffix("healthcheck") {
+    rootPath(basePath) {
+      path("health" / "report") {
         parameter('pretty.as[Boolean] ? false) { pretty =>
           dynamic {
             detach() {
