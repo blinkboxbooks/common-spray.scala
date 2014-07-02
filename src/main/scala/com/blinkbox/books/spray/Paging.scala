@@ -20,7 +20,6 @@ object Paging {
    */
   def links(numberOfResults: Option[Int], offset: Int, count: Int, linkBaseUrl: String,
             linkParams: Option[Map[String, String]] = None, includeSelf: Boolean = true): Seq[PageLink] = {
-    val params = linkParams ++ Map("count" -> count, "offset" -> count)
     val hasMore = numberOfResults.fold(true)(_ > offset + count)
     val thisPage = optLink(includeSelf, getPageLink("this", linkBaseUrl, linkParams, count, offset))
     val prevPage = optLink(offset > 0, getPageLink("prev", linkBaseUrl, linkParams, count, (offset - count).max(0)))
