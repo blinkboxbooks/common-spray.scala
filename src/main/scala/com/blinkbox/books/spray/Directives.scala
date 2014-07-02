@@ -1,12 +1,14 @@
 package com.blinkbox.books.spray
 
-import scala.concurrent.duration.Duration
+import com.blinkbox.books.spray.v1.SortOrder
 import spray.http.CacheDirectives._
 import spray.http.DateTime
 import spray.http.HttpHeaders._
 import spray.httpx.marshalling.ToResponseMarshallable
 import spray.routing.Directives._
 import spray.routing.{Directive1, StandardRoute}
+
+import scala.concurrent.duration.Duration
 
 case class Page(offset: Int, count: Int) {
   require(offset >= 0, "Offset must be 0 or greater")
@@ -17,22 +19,30 @@ trait Directives extends MonitoringDirectives {
 
   /**
    * Custom directive for extracting and validating page parameters (offset and count).
+   * @param defaultCount The default number of results per page.
    */
   def paged(defaultCount: Int) = parameters('offset.as[Int] ? 0, 'count.as[Int] ? defaultCount).as(Page)
+
+  /**
+   * Custom directive for extracting and validating sort order parameters (order and desc).
+   * @param defaultOrder The default sorting order.
+   * @return
+   */
+  def sorted(defaultOrder: SortOrder) = parameters('order ? defaultOrder.field, 'desc.as[Boolean] ? defaultOrder.desc).as(SortOrder)
 
   /**
    * Directive for setting cache headers in a standard way.
    *
    * This sets time-dependent headers without requiring the use of a surrounding dynamic {} directive.
    *
-   * @param maxAge  The duration for which the returned value is cacheable.
+   * @param maxAge The duration for which the returned value is cacheable.
    */
-  def cacheable(maxAge: Duration) = provideTimeNow.flatMap { now => withCacheHeaders(now, maxAge) }
+  def cacheable(maxAge: Duration) = provideTimeNow.flatMap { now => withCacheHeaders(now, maxAge)}
 
   /**
    * Directive for completing request while also setting cache headers for the result.
    *
-   * @param maxAge  The duration for which the returned value is cacheable.
+   * @param maxAge The duration for which the returned value is cacheable.
    * @param response The response with which to complete the request.
    */
   def cacheable(maxAge: Duration, response: => ToResponseMarshallable): StandardRoute = cacheable(maxAge) & complete(response)
@@ -62,7 +72,6 @@ trait Directives extends MonitoringDirectives {
   private def withCacheHeaders(now: DateTime, maxAge: Duration) = respondWithHeaders(
     `Cache-Control`(`public`, `max-age`(maxAge.toSeconds)),
     RawHeader("Expires", (now + maxAge.toMillis).toRfc1123DateTimeString))
-
 }
 
 object Directives extends Directives
