@@ -11,9 +11,9 @@ import spray.testkit.ScalatestRouteTest
 trait CustomDirectivesService extends HttpService with Directives {
 
   val defaultCount = 42
-  var receivedPage: Page = _
-
   val defaultOrder = SortOrder("NAME", desc = true)
+
+  var receivedPage: Page = _
   var receivedOrder: SortOrder = _
 
   def route: Route = {
@@ -24,9 +24,16 @@ trait CustomDirectivesService extends HttpService with Directives {
           complete(OK)
         }
       } ~
-      path("sortedEndpoint") {
-        sorted(defaultOrder) { sortOrder =>
+      path("orderedEndpoint") {
+        ordered(defaultOrder) { sortOrder =>
           receivedOrder = sortOrder
+          complete(OK)
+        }
+      } ~
+      path("orderedAndPagedEndpoint") {
+        orderedAndPaged(defaultOrder, defaultCount) { (sortOrder, page) =>
+          receivedOrder = sortOrder
+          receivedPage = page
           complete(OK)
         }
       }
@@ -65,23 +72,31 @@ class DirectivesTest extends FunSuite with ScalatestRouteTest with CustomDirecti
     }
   }
 
-  test("Sorting with default parameters") {
-    Get("/sortedEndpoint") ~> route ~> check {
+  test("Ordering with default parameters") {
+    Get("/orderedEndpoint") ~> route ~> check {
       assert(status === OK)
-      assert(receivedOrder === SortOrder("NAME", desc = true))
+      assert(receivedOrder === defaultOrder)
     }
   }
 
-  test("Sorting with parameters in request") {
-    Get("/sortedEndpoint?order=COUNTRY&desc=false") ~> route ~> check {
+  test("Ordering with parameters in request") {
+    Get("/orderedEndpoint?order=COUNTRY&desc=false") ~> route ~> check {
       assert(status === OK)
       assert(receivedOrder === SortOrder("COUNTRY", desc = false))
     }
   }
 
-  test("Sorting with invalid sort ordering") {
-    Get("/sortedEndPoint?order=COUNTRY") ~> route ~> check {
+  test("Ordering with invalid sort ordering") {
+    Get("/orderedEndpoint?order=COUNTRY&desc=whatever") ~> route ~> check {
       assert(!handled)
+    }
+  }
+
+  test("Ordering and Paging with default parameters") {
+    Get("/orderedAndPagedEndpoint") ~> route ~> check {
+      assert(status === OK)
+      assert(receivedPage === Page(offset = 0, count = defaultCount))
+      assert(receivedOrder === defaultOrder)
     }
   }
 }

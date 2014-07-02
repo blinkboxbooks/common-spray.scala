@@ -3,6 +3,8 @@ package com.blinkbox.books.spray
 import com.blinkbox.books.spray.Paging.PageLink
 import spray.http.{MediaType, MediaTypes}
 
+import scala.language.implicitConversions
+
 /**
  * Provides support for the version 1 media type, including common model objects.
  */
