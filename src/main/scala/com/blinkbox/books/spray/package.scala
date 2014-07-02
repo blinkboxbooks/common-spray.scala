@@ -4,11 +4,16 @@ import _root_.spray.http.RemoteAddress.IP
 import _root_.spray.http.{HttpHeader, HttpRequest, RemoteAddress, Uri}
 import _root_.spray.http.HttpHeaders.{`Remote-Address`, `X-Forwarded-For`}
 import java.net.{InetAddress, URI, URL}
+import com.blinkbox.books.spray.Paging.PageLink
+import com.blinkbox.books.spray.v1.Link
+
 import scala.language.implicitConversions
 
 package object spray {
   implicit def uri2uri(uri: URI) = Uri(uri.toString)
   implicit def url2uri(url: URL) = Uri(url.toString)
+
+  implicit def pageLink2Link(pageLink: PageLink) = Link(pageLink.rel, pageLink.href, None, None)
 
   /**
    * Adds functionality to a `HttpRequest`.
