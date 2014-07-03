@@ -47,15 +47,15 @@ class DirectivesTest extends FunSuite with ScalatestRouteTest with CustomDirecti
 
   test("Paging with default parameters") {
     Get("/pagedEndpoint") ~> route ~> check {
-      assert(status === OK)
-      assert(receivedPage === Page(offset = 0, count = defaultCount))
+      assert(status == OK)
+      assert(receivedPage == Page(offset = 0, count = defaultCount))
     }
   }
 
   test("Paging with parameters in request") {
     Get("/pagedEndpoint?offset=5&count=42") ~> route ~> check {
-      assert(status === OK)
-      assert(receivedPage === Page(offset = 5, count = 42))
+      assert(status == OK)
+      assert(receivedPage == Page(offset = 5, count = 42))
     }
   }
 
@@ -73,15 +73,15 @@ class DirectivesTest extends FunSuite with ScalatestRouteTest with CustomDirecti
 
   test("Ordering with default parameters") {
     Get("/orderedEndpoint") ~> route ~> check {
-      assert(status === OK)
-      assert(receivedOrder === defaultOrder)
+      assert(status == OK)
+      assert(receivedOrder == defaultOrder)
     }
   }
 
   test("Ordering with parameters in request") {
     Get("/orderedEndpoint?order=COUNTRY&desc=false") ~> route ~> check {
-      assert(status === OK)
-      assert(receivedOrder === SortOrder("COUNTRY", desc = false))
+      assert(status == OK)
+      assert(receivedOrder == SortOrder("COUNTRY", desc = false))
     }
   }
 
@@ -93,9 +93,9 @@ class DirectivesTest extends FunSuite with ScalatestRouteTest with CustomDirecti
 
   test("Ordering and Paging with default parameters") {
     Get("/orderedAndPagedEndpoint") ~> route ~> check {
-      assert(status === OK)
-      assert(receivedPage === Page(offset = 0, count = defaultCount))
-      assert(receivedOrder === defaultOrder)
+      assert(status == OK)
+      assert(receivedPage == Page(offset = 0, count = defaultCount))
+      assert(receivedOrder == defaultOrder)
     }
   }
 }
