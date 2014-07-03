@@ -23,7 +23,7 @@ class JsonFormatsTest extends FunSuite {
     implicit val formats = blinkboxFormat()
 
     val serialised = write(things)
-    assert(serialised === """{"things":[{"stringValue":"I'm a widget"},{"intValue":42}]}""")
+    assert(serialised == """{"things":[{"stringValue":"I'm a widget"},{"intValue":42}]}""")
 
     // Shouldn't be able to deserialise a list with mixed types without type hints.
     intercept[Exception] { read[Things](serialised) }
@@ -35,9 +35,9 @@ class JsonFormatsTest extends FunSuite {
     implicit val formats = blinkboxFormat(typeHints)
 
     val serialised = write(things)
-    assert(serialised === """{"things":[{"type":"urn:widget","stringValue":"I'm a widget"},{"type":"urn:gizmo","intValue":42}]}""")
+    assert(serialised == """{"things":[{"type":"urn:widget","stringValue":"I'm a widget"},{"type":"urn:gizmo","intValue":42}]}""")
     val deserialised = read[Things](serialised)
-    assert(deserialised === things, "Should come out the same after serialisation + deserialisation")
+    assert(deserialised == things, "Should come out the same after serialisation + deserialisation")
   }
 
   test("deserialise class that doesn't have a defined type hint") {
@@ -48,6 +48,6 @@ class JsonFormatsTest extends FunSuite {
     val data = List(Widget("I'm a widget"))
     val deserialised = read[List[Widget]](write(data))
 
-    assert(data === deserialised, "Should be able to deserialise object with no defined type hint")
+    assert(data == deserialised, "Should be able to deserialise object with no defined type hint")
   }
 }

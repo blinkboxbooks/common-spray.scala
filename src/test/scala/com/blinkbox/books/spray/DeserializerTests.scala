@@ -30,13 +30,13 @@ class DeserializerTests extends FunSuite with ScalatestRouteTest with PartialFun
 
   test("deserialises BigDecimal from query parameter") {
     Get("/bigdecimal?amount=123.0001") ~> route ~> check {
-      assert(responseAs[BigDecimal] === BigDecimal("123.0001"))
+      assert(responseAs[BigDecimal] == BigDecimal("123.0001"))
     }
   }
 
   test("BigDecimal deserialiser returns 128 bit values") {
     Get("/bigdecimal?amount=123.000000000000000000000000000000001") ~> route ~> check {
-      assert(responseAs[BigDecimal] === BigDecimal("123.00000000000000000000000000000000"))
+      assert(responseAs[BigDecimal] == BigDecimal("123.00000000000000000000000000000000"))
     }
   }
 
@@ -46,13 +46,13 @@ class DeserializerTests extends FunSuite with ScalatestRouteTest with PartialFun
     }
 
     Get("/bigdecimal?amount=23453f") ~> route ~> check {
-      assert(pf.valueAt(rejection) === true)
+      assert(pf.valueAt(rejection) == true)
     }
   }
 
   test("deserialises DateTime from query parameter") {
     Get(s"/datetime?value=2014-05-17T14:00:05Z") ~> route ~> check {
-      assert(responseAs[DateTime] === ISODateTimeFormat.dateTimeNoMillis().parseDateTime("2014-05-17T14:00:05Z"))
+      assert(responseAs[DateTime] == ISODateTimeFormat.dateTimeNoMillis().parseDateTime("2014-05-17T14:00:05Z"))
     }
   }
 
@@ -62,7 +62,7 @@ class DeserializerTests extends FunSuite with ScalatestRouteTest with PartialFun
     }
 
     Get(s"/datetime?value=2014-05-17T14:00:05") ~> route ~> check {
-      assert(pf.valueAt(rejection) === true)
+      assert(pf.valueAt(rejection) == true)
     }
   }
 }

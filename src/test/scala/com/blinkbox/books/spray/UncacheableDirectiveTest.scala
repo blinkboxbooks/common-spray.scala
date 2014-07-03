@@ -26,7 +26,7 @@ class UncacheableDirectiveTest extends FunSuite with ScalatestRouteTest {
       val time1 = parseDateTime(header("Expires").get.value).get
       Thread.sleep(1001)
       Get() ~> { neverCache { complete(OK) } } ~> check {
-        assert(status === OK)
+        assert(status == OK)
         val time2 = parseDateTime(header("Expires").get.value).get
         assert(time1 != time2, "Time field should be updated dynamically on each request")
       }
@@ -38,7 +38,7 @@ class UncacheableDirectiveTest extends FunSuite with ScalatestRouteTest {
       val time1 = parseDateTime(header("Expires").get.value).get
       Thread.sleep(1001)
       Get() ~> { uncacheable(OK) } ~> check {
-        assert(status === OK)
+        assert(status == OK)
         val time2 = parseDateTime(header("Expires").get.value).get
         assert(time1 != time2, "Time field should be updated dynamically on each request")
       }
@@ -46,9 +46,9 @@ class UncacheableDirectiveTest extends FunSuite with ScalatestRouteTest {
   }
 
   def checkNoCacheHeaders {
-    assert(header("Cache-Control").get.value === "no-store")
+    assert(header("Cache-Control").get.value == "no-store")
     assert(parseDateTime(header("Expires").get.value).get <= DateTime.now)
-    assert(header("Pragma").get.value === "no-cache")
+    assert(header("Pragma").get.value == "no-cache")
   }
 
   // The expected date-time format.

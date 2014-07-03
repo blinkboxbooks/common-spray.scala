@@ -35,21 +35,21 @@ object Employee {
 class Version1JsonSupportTest extends FunSuite with Version1JsonSupport {
 
   test("Provide unmarshalling support for a case class") {
-    assert(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.json).as[Employee] === Right(Employee.simple))
+    assert(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.json).as[Employee] == Right(Employee.simple))
   }
 
   test("Provide marshalling support for a case class") {
-    assert(marshal(Employee.simple) === Right(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`.withCharset(`UTF-8`), Employee.json)))
+    assert(marshal(Employee.simple) == Right(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`.withCharset(`UTF-8`), Employee.json)))
   }
 
   test("Correctly decode UTF-8 characters") {
-    assert(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.utf8json).as[Employee] === Right(Employee.utf8))
+    assert(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.utf8json).as[Employee] == Right(Employee.utf8))
   }
 
   test("provide proper error messages for requirement errors") {
     val Left(MalformedContent(msg, Some(_: IllegalArgumentException))) =
       HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.illegalEmployeeJson).as[Employee]
-    assert(msg === "requirement failed: Board members must be older than 40")
+    assert(msg == "requirement failed: Board members must be older than 40")
   }
 
 }
@@ -60,15 +60,15 @@ class Version1JsonSupportResponseTypeHintsTest extends FunSuite with Version1Jso
   override val responseTypeHints = ExplicitTypeHints(Map(classOf[Employee] -> "emp"))
 
   test("Provide unmarshalling support for a case class without a type hint") {
-    assert(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.json).as[Employee] === Right(Employee.simple))
+    assert(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.json).as[Employee] == Right(Employee.simple))
   }
 
   test("Provide unmarshalling support for a case class with a type hint") {
-    assert(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.hintedJson).as[Employee] === Right(Employee.simple))
+    assert(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`, Employee.hintedJson).as[Employee] == Right(Employee.simple))
   }
 
   test("Provide marshalling support with a type hint for a case class") {
-    assert(marshal(Employee.simple) === Right(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`.withCharset(`UTF-8`), Employee.hintedJson)))
+    assert(marshal(Employee.simple) == Right(HttpEntity(`application/vnd.blinkboxbooks.data.v1+json`.withCharset(`UTF-8`), Employee.hintedJson)))
   }
 
 }

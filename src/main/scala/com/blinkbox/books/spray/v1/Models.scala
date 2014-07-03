@@ -23,6 +23,7 @@ case class Image(
   @(ApiModelProperty @field)(position = 0, value = "The relationship of the image to this resource") rel: String,
   @(ApiModelProperty @field)(position = 1, value = "The source URL for the image") src: String)
 
+
 @ApiModel(description = "Information about an error")
 case class Error(
   @(ApiModelProperty @field)(position = 0, value = "The error code") code: String,

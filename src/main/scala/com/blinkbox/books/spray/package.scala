@@ -1,9 +1,11 @@
 package com.blinkbox.books
 
-import _root_.spray.http.RemoteAddress.IP
-import _root_.spray.http.{HttpHeader, HttpRequest, RemoteAddress, Uri}
+import java.net.{URI, URL}
+
 import _root_.spray.http.HttpHeaders.{`Remote-Address`, `X-Forwarded-For`}
-import java.net.{InetAddress, URI, URL}
+import _root_.spray.http.RemoteAddress.IP
+import _root_.spray.http.{HttpRequest, RemoteAddress, Uri}
+
 import scala.language.implicitConversions
 
 package object spray {
