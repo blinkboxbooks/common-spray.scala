@@ -43,7 +43,7 @@ trait Directives extends MonitoringDirectives {
    *
    * @param maxAge The duration for which the returned value is cacheable.
    */
-  def cacheable(maxAge: Duration) = provideTimeNow.flatMap { now => withCacheHeaders(now, maxAge)}
+  def cacheable(maxAge: Duration) = provideTimeNow.flatMap { now => withCacheHeaders(now, maxAge) }
 
   /**
    * Directive for completing request while also setting cache headers for the result.
