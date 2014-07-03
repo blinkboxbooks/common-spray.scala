@@ -14,7 +14,14 @@ case class Page(offset: Int, count: Int) {
   require(count > 0, "Count must be greater than 0")
 }
 
-case class SortOrder(field: String, desc: Boolean)
+object SortOrder {
+  val fieldParam = "order"
+  val descParam = "desc"
+}
+
+case class SortOrder(field: String, desc: Boolean) {
+  val asQueryParams = Seq((SortOrder.fieldParam, field), (SortOrder.descParam, desc))
+}
 
 trait Directives extends MonitoringDirectives {
 
@@ -28,7 +35,7 @@ trait Directives extends MonitoringDirectives {
    * Custom directive for extracting and validating sort order parameters (order and desc).
    * @param defaultOrder The default sorting order.
    */
-  def ordered(defaultOrder: SortOrder) = parameters('order ? defaultOrder.field, 'desc.as[Boolean] ? defaultOrder.desc).as(SortOrder)
+  def ordered(defaultOrder: SortOrder) = parameters(SortOrder.fieldParam ? defaultOrder.field, SortOrder.descParam.as[Boolean] ? defaultOrder.desc).as(SortOrder)
 
   /**
    * Custom directive for extracting and validating page and sort order parameters (offset, count, order, desc).
