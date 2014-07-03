@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.10.0 ([#18](https://git.mobcastdev.com/Platform/common-spray/pull/18) 2014-07-02 16:33:10)
+
+Sorting and paging improvements
+
+### Breaking changes
+
+* Added ordered directive
+* Added orderedAndPaged directive
+* Paging links now support an optional query param
+* Added an implicit conversion from `PageLink` to `Link` so that it can be used with `ListPage`
+
 ## 0.9.1 ([#16](https://git.mobcastdev.com/Platform/common-spray/pull/16) 2014-06-27 12:47:47)
 
 monitor directive now handles exceptions
