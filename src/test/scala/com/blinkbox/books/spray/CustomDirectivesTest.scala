@@ -79,14 +79,14 @@ class DirectivesTest extends FunSuite with ScalatestRouteTest with CustomDirecti
   }
 
   test("Ordering with parameters in request") {
-    Get(s"/orderedEndpoint?${SortOrder.fieldParam}=COUNTRY&${SortOrder.descParam}=false") ~> route ~> check {
+    Get("/orderedEndpoint?order=COUNTRY&desc=false") ~> route ~> check {
       assert(status == OK)
       assert(receivedOrder == SortOrder("COUNTRY", desc = false))
     }
   }
 
   test("Ordering with invalid sort ordering") {
-    Get(s"/orderedEndpoint?order=COUNTRY&desc=whatever") ~> sealRoute(route) ~> check {
+    Get("/orderedEndpoint?order=COUNTRY&desc=whatever") ~> sealRoute(route) ~> check {
       assert(status == BadRequest)
     }
   }
