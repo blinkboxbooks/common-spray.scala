@@ -1,6 +1,5 @@
 package com.blinkbox.books.spray
 
-import com.blinkbox.books.spray.v1.SortOrder
 import spray.http.CacheDirectives._
 import spray.http.DateTime
 import spray.http.HttpHeaders._
@@ -14,6 +13,8 @@ case class Page(offset: Int, count: Int) {
   require(offset >= 0, "Offset must be 0 or greater")
   require(count > 0, "Count must be greater than 0")
 }
+
+case class SortOrder(field: String, desc: Boolean)
 
 trait Directives extends MonitoringDirectives {
 

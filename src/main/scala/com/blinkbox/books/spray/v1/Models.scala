@@ -23,10 +23,6 @@ case class Image(
   @(ApiModelProperty @field)(position = 0, value = "The relationship of the image to this resource") rel: String,
   @(ApiModelProperty @field)(position = 1, value = "The source URL for the image") src: String)
 
-@ApiModel(description = "The sorting order or the specified field")
-case class SortOrder(
-  @(ApiModelProperty @field)(position = 0, value = "The field to use for sorting") field: String,
-  @(ApiModelProperty @field)(position = 1, value = "Whether the order is descending or not") desc: Boolean)
 
 @ApiModel(description = "Information about an error")
 case class Error(

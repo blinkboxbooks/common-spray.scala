@@ -1,6 +1,5 @@
 package com.blinkbox.books.spray
 
-import com.blinkbox.books.spray.v1.SortOrder
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
