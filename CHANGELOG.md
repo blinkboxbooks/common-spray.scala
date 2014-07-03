@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.12.0 ([#20](https://git.mobcastdev.com/Platform/common-spray/pull/20) 2014-07-03 17:28:41)
+
+Quick fix for asQueryParams
+
+### Breaking change
+
+* Changed `asQueryParams` to return Seq[(String, String)]
+
 ## 0.11.0 ([#19](https://git.mobcastdev.com/Platform/common-spray/pull/19) 2014-07-03 16:33:23)
 
 Pagination links improvements
