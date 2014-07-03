@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.11.0 ([#19](https://git.mobcastdev.com/Platform/common-spray/pull/19) 2014-07-03 16:33:23)
+
+Pagination links improvements
+
+### Breaking changes
+
+* Changed the signature of paginated links generation: accepts a sequence of tuples instead of a map, to support repeated parameters
+
+### Improvements
+
+* Added `asQueryParams` for each `SortOrder` object so that you can combine it with pagination.
+
 ## 0.10.0 ([#18](https://git.mobcastdev.com/Platform/common-spray/pull/18) 2014-07-02 16:33:10)
 
 Sorting and paging improvements
