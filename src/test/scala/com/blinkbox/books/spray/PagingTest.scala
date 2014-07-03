@@ -53,8 +53,13 @@ class PagingTest extends FunSuite {
   }
 
   test("links for first page, excluding this, including existing query parameters") {
-    assert(links(numberOfResults = Some(20), offset = 0, count = 5, baseUrl, Some(Map("test" -> "1")), includeSelf = false).toSet
+    assert(links(numberOfResults = Some(20), offset = 0, count = 5, baseUrl, Some(Map("test" -> "1").toSeq), includeSelf = false).toSet
       == Set(PageLink("next", s"$baseUrl?test=1&count=5&offset=5")))
+  }
+
+  test("links for first page, excluding this, including existing repeated query parameters") {
+    assert(links(numberOfResults = Some(20), offset = 0, count = 5, baseUrl, Some(Seq(("test", "1"), ("test", "2"))), includeSelf = false).toSet
+      == Set(PageLink("next", s"$baseUrl?test=1&test=2&count=5&offset=5")))
   }
 
 }
