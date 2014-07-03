@@ -20,7 +20,7 @@ object SortOrder {
 }
 
 case class SortOrder(field: String, desc: Boolean) {
-  val asQueryParams = Seq((SortOrder.fieldParam, field), (SortOrder.descParam, desc))
+  val asQueryParams = Seq((SortOrder.fieldParam, field.toString), (SortOrder.descParam, desc.toString))
 }
 
 trait Directives extends MonitoringDirectives {
