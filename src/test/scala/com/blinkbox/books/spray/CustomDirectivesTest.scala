@@ -60,14 +60,14 @@ class DirectivesTest extends FunSuite with ScalatestRouteTest with CustomDirecti
   }
 
   test("Try to request invalid offset") {
-    Get("/pagedEndpoint?offset=5x") ~> route ~> check {
-      assert(!handled)
+    Get("/pagedEndpoint?offset=5x") ~> sealRoute(route) ~> check {
+      assert(status == BadRequest)
     }
   }
 
   test("Try to request invalid count") {
-    Get("/pagedEndpoint?count=abc") ~> route ~> check {
-      assert(!handled)
+    Get("/pagedEndpoint?count=abc") ~> sealRoute(route) ~> check {
+      assert(status == BadRequest)
     }
   }
 
@@ -86,8 +86,8 @@ class DirectivesTest extends FunSuite with ScalatestRouteTest with CustomDirecti
   }
 
   test("Ordering with invalid sort ordering") {
-    Get("/orderedEndpoint?order=COUNTRY&desc=whatever") ~> route ~> check {
-      assert(!handled)
+    Get("/orderedEndpoint?order=COUNTRY&desc=whatever") ~> sealRoute(route) ~> check {
+      assert(status == BadRequest)
     }
   }
 
