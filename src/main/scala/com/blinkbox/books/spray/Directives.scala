@@ -35,7 +35,7 @@ trait Directives extends MonitoringDirectives {
    * Custom directive for extracting and validating sort order parameters (order and desc).
    * @param defaultOrder The default sorting order.
    */
-  def ordered(defaultOrder: SortOrder) = parameters(SortOrder.fieldParam ? defaultOrder.field, SortOrder.descParam.as[Boolean] ? defaultOrder.desc).as(SortOrder)
+  def ordered(defaultOrder: SortOrder) = parameters(SortOrder.fieldParam ? defaultOrder.field, SortOrder.descParam.as[Boolean] ? defaultOrder.desc).as(SortOrder.apply _)
 
   /**
    * Custom directive for extracting and validating page and sort order parameters (offset, count, order, desc).
