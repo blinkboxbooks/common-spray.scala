@@ -1,5 +1,36 @@
 # Change Log
 
+## 0.12.0 ([#20](https://git.mobcastdev.com/Platform/common-spray/pull/20) 2014-07-03 17:28:41)
+
+Quick fix for asQueryParams
+
+### Breaking change
+
+* Changed `asQueryParams` to return Seq[(String, String)]
+
+## 0.11.0 ([#19](https://git.mobcastdev.com/Platform/common-spray/pull/19) 2014-07-03 16:33:23)
+
+Pagination links improvements
+
+### Breaking changes
+
+* Changed the signature of paginated links generation: accepts a sequence of tuples instead of a map, to support repeated parameters
+
+### Improvements
+
+* Added `asQueryParams` for each `SortOrder` object so that you can combine it with pagination.
+
+## 0.10.0 ([#18](https://git.mobcastdev.com/Platform/common-spray/pull/18) 2014-07-02 16:33:10)
+
+Sorting and paging improvements
+
+### Breaking changes
+
+* Added ordered directive
+* Added orderedAndPaged directive
+* Paging links now support an optional query param
+* Added an implicit conversion from `PageLink` to `Link` so that it can be used with `ListPage`
+
 ## 0.9.1 ([#16](https://git.mobcastdev.com/Platform/common-spray/pull/16) 2014-06-27 12:47:47)
 
 monitor directive now handles exceptions

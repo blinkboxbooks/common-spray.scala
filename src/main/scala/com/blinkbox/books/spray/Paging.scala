@@ -1,5 +1,7 @@
 package com.blinkbox.books.spray
 
+import spray.http.Uri
+
 object Paging {
 
   /**
@@ -10,19 +12,23 @@ object Paging {
   /**
    * Generate links for use in paged results.
    *
-   * @param numberOfResults The number of total results that exist. If present, this will
-   * be used to decide whether to generate a "next" link or not. If not present, the "next" link
-   * will always be generated.
+   * @param numberOfResults The number of total results that exist. If present, this will be used to decide whether to
+   *                        generate a "next" link or not. If not present, the "next" link will always be generated.
    * @param offset The current offset into the results list.
    * @param count The number of results in a page.
    */
-  def links(numberOfResults: Option[Int], offset: Int, count: Int,
-    linkBaseUrl: String, includeSelf: Boolean = true): Seq[PageLink] = {
+  def links(numberOfResults: Option[Int], offset: Int, count: Int, linkBaseUrl: String,
+            linkParams: Option[Seq[(String, String)]] = None, includeSelf: Boolean = true): Seq[PageLink] = {
     val hasMore = numberOfResults.fold(true)(_ > offset + count)
-    val thisPage = optLink(includeSelf, PageLink("this", s"$linkBaseUrl?count=$count&offset=$offset"))
-    val prevPage = optLink(offset > 0, PageLink("prev", s"$linkBaseUrl?count=$count&offset=${(offset - count).max(0)}"))
-    val nextPage = optLink(hasMore, PageLink("next", s"$linkBaseUrl?count=$count&offset=${offset + count}"))
+    val thisPage = optLink(includeSelf, getPageLink("this", linkBaseUrl, linkParams, count, offset))
+    val prevPage = optLink(offset > 0, getPageLink("prev", linkBaseUrl, linkParams, count, (offset - count).max(0)))
+    val nextPage = optLink(hasMore, getPageLink("next", linkBaseUrl, linkParams, count, offset + count))
     Seq(thisPage, prevPage, nextPage).flatten
+  }
+
+  private def getPageLink(rel: String, linkBaseUrl: String, linkParams: Option[Seq[(String, String)]], count: Int, offset: Int): PageLink = {
+    val params = linkParams.getOrElse(Seq.empty[(String, String)]) ++ Seq(("count", count.toString), ("offset", offset.toString))
+    PageLink(rel, Uri(linkBaseUrl).withQuery(params: _*).toString())
   }
 
   private def optLink(cond: Boolean, link: => PageLink) = if (cond) Some(link) else None

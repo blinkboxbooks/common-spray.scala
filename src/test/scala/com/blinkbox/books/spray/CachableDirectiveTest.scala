@@ -42,8 +42,8 @@ class CacheableDirectiveTest extends FunSuite with ScalatestRouteTest with Cache
   test("Response headers on cacheable endpoint") {
     val start = DateTime.now
     Get("/cacheableEndpoint") ~> route ~> check {
-      assert(status === OK)
-      assert(header("Cache-Control").get.value === s"public, max-age=${maxAge.toSeconds}")
+      assert(status == OK)
+      assert(header("Cache-Control").get.value == s"public, max-age=${maxAge.toSeconds}")
 
       val expiryTimeStr = header("Expires").get.value
       assert(parseDateTime(expiryTimeStr).isSuccess, "Should have set expiry time in the valid format")
@@ -53,8 +53,8 @@ class CacheableDirectiveTest extends FunSuite with ScalatestRouteTest with Cache
   test("Response headers when completing cacheable object") {
     val start = DateTime.now
     Get("/cacheableCompletedEndpoint") ~> route ~> check {
-      assert(status === OK)
-      assert(header("Cache-Control").get.value === s"public, max-age=${maxAge.toSeconds}")
+      assert(status == OK)
+      assert(header("Cache-Control").get.value == s"public, max-age=${maxAge.toSeconds}")
 
       val expiryTimeStr = header("Expires").get.value
       assert(parseDateTime(expiryTimeStr).isSuccess, "Should have set expiry time in the valid format")
@@ -68,7 +68,7 @@ class CacheableDirectiveTest extends FunSuite with ScalatestRouteTest with Cache
       // Sleep for a second, to ensure date header will be updated.
       Thread.sleep(1001)
       Get("/cacheableEndpoint") ~> route ~> check {
-        assert(status === OK)
+        assert(status == OK)
         val time2 = parseDateTime(header("Expires").get.value).get
         assert(time1 != time2, "Time field should be updated dynamically on each request")
       }
@@ -77,9 +77,9 @@ class CacheableDirectiveTest extends FunSuite with ScalatestRouteTest with Cache
 
   test("No cache related response headers on non-cacheable endpoint") {
     Get("/nonCacheableEndpoint") ~> route ~> check {
-      assert(status === OK)
-      assert(header("Cache-Control") === None)
-      assert(header("Expires") === None)
+      assert(status == OK)
+      assert(header("Cache-Control") == None)
+      assert(header("Expires") == None)
     }
   }
 
