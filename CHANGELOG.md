@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.13.0 ([#17](https://git.mobcastdev.com/Platform/common-spray/pull/17) 2014-06-30 18:58:17)
+
+Added a health check service trait
+
+### New features
+
+- Added a `HealthCheckHttpService` trait to serve Codahale health check results using Spray.
+- Added a `rootPath` directive for easier and more reliable hosting of services at configurable paths.
+
 ## 0.12.0 ([#20](https://git.mobcastdev.com/Platform/common-spray/pull/20) 2014-07-03 17:28:41)
 
 Quick fix for asQueryParams
