@@ -1,8 +1,9 @@
 package com.blinkbox.books.spray
 
 import org.slf4j.{Logger, MDC}
+import spray.http.HttpHeaders._
 import scala.util.control.NonFatal
-import spray.http.{RequestProcessingException, IllegalRequestException}
+import spray.http.{HttpHeader, RequestProcessingException, IllegalRequestException}
 import spray.http.StatusCodes._
 import spray.routing.{Directive0, ExceptionHandler, RejectionHandler}
 import spray.routing.directives.{BasicDirectives, ExecutionDirectives}
@@ -86,23 +87,43 @@ trait MonitoringDirectives {
   // sometimes optimise the transformation and run it before the response actually completes.
   private def logRequestResponseDetails(log: Logger): Directive0 = mapRequestContext { ctx =>
     val request = ctx.request
+    MDC.put("timestamp", System.currentTimeMillis.toString)
     MDC.put("httpMethod", request.method.name)
     MDC.put("httpPath", request.uri.path.toString())
     MDC.put("httpPathAndQuery", request.uri.toRelative.toString())
+    MDC.put("httpRequestHeaders", request.headers.filter(isInterestingRequestHeader).mkString(", "))
     MDC.put("httpClientIP", request.clientIP.getOrElse("").toString)
     val timestamp = System.currentTimeMillis
-    ctx withHttpResponseMapped { response =>
+    ctx.withHttpResponseMapped { response =>
       val duration = System.currentTimeMillis - timestamp
       MDC.put("httpStatus", response.status.intValue.toString)
-      MDC.put("httpDuration", duration.toString)
+      MDC.put("httpResponseHeaders", response.headers.filter(isInterestingResponseHeader).mkString(", "))
+      MDC.put("httpApplicationTime", duration.toString)
       val message = s"${request.method} ${request.uri.path} returned ${response.status} in ${duration}ms"
       response.status match {
+        case Unauthorized => log.info(message)
         case ServerError(_) => log.error(message)
         case ClientError(_) => log.warn(message)
         case _ => log.info(message)
       }
       response
     }
+  }
+
+  private def isInterestingRequestHeader(header: HttpHeader) = header.lowercaseName match {
+    case `Accept-Encoding`.lowercaseName => true
+    case `User-Agent`.lowercaseName => true
+    case "via" => true
+    case `X-Forwarded-For`.lowercaseName => true
+    case "x-requested-with" => true
+    case _ => false
+  }
+
+  private def isInterestingResponseHeader(header: HttpHeader) = header.lowercaseName match {
+    case `Cache-Control`.lowercaseName => true
+    case `Content-Length`.lowercaseName => true
+    case `WWW-Authenticate`.lowercaseName => true
+    case _ => false
   }
 
   // an exception handler based on the default exception handler logic, but which uses the standard
