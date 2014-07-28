@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.13.1 ([#21](https://git.mobcastdev.com/Platform/common-spray/pull/21) 2014-07-25 17:40:19)
+
+Log more info from HTTP requests
+
+### Improvements
+
+- Now captures interesting HTTP request and response headers in the log
+output.
+- Logs `401 Unauthorized` calls as INFO rather than WARN because this
+is a common BAU code for us.
+
 ## 0.13.0 ([#17](https://git.mobcastdev.com/Platform/common-spray/pull/17) 2014-06-30 18:58:17)
 
 Added a health check service trait
