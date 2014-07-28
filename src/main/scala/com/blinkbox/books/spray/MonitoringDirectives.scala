@@ -91,13 +91,13 @@ trait MonitoringDirectives {
     MDC.put("httpMethod", request.method.name)
     MDC.put("httpPath", request.uri.path.toString())
     MDC.put("httpPathAndQuery", request.uri.toRelative.toString())
-    MDC.put("httpRequestHeaders", request.headers.filter(isInterestingRequestHeader).mkString(", "))
+    MDC.put("httpRequestHeaders", request.headers.filter(isInterestingRequestHeader).sortBy(_.lowercaseName).mkString(", "))
     MDC.put("httpClientIP", request.clientIP.getOrElse("").toString)
     val timestamp = System.currentTimeMillis
     ctx.withHttpResponseMapped { response =>
       val duration = System.currentTimeMillis - timestamp
       MDC.put("httpStatus", response.status.intValue.toString)
-      MDC.put("httpResponseHeaders", response.headers.filter(isInterestingResponseHeader).mkString(", "))
+      MDC.put("httpResponseHeaders", response.headers.filter(isInterestingResponseHeader).sortBy(_.lowercaseName).mkString(", "))
       MDC.put("httpApplicationTime", duration.toString)
       val message = s"${request.method} ${request.uri.path} returned ${response.status} in ${duration}ms"
       response.status match {
