@@ -1,8 +1,9 @@
 package com.blinkbox.books.spray
 
 import org.slf4j.{Logger, MDC}
+import spray.http.HttpHeaders._
 import scala.util.control.NonFatal
-import spray.http.{RequestProcessingException, IllegalRequestException}
+import spray.http.{HttpHeader, RequestProcessingException, IllegalRequestException}
 import spray.http.StatusCodes._
 import spray.routing.{Directive0, ExceptionHandler, RejectionHandler}
 import spray.routing.directives.{BasicDirectives, ExecutionDirectives}
@@ -13,6 +14,7 @@ import spray.routing.directives.{BasicDirectives, ExecutionDirectives}
 trait MonitoringDirectives {
   import BasicDirectives._
   import ExecutionDirectives._
+  import MonitoringDirectives._
 
   /**
    * A magnet to bind to an SLF4J `Logger` using implicit conversions.
@@ -86,17 +88,21 @@ trait MonitoringDirectives {
   // sometimes optimise the transformation and run it before the response actually completes.
   private def logRequestResponseDetails(log: Logger): Directive0 = mapRequestContext { ctx =>
     val request = ctx.request
+    MDC.put("timestamp", System.currentTimeMillis.toString)
     MDC.put("httpMethod", request.method.name)
     MDC.put("httpPath", request.uri.path.toString())
     MDC.put("httpPathAndQuery", request.uri.toRelative.toString())
+    MDC.put("httpRequestHeaders", request.headers.filter(isInterestingRequestHeader).sortBy(_.lowercaseName).mkString(", "))
     MDC.put("httpClientIP", request.clientIP.getOrElse("").toString)
     val timestamp = System.currentTimeMillis
-    ctx withHttpResponseMapped { response =>
+    ctx.withHttpResponseMapped { response =>
       val duration = System.currentTimeMillis - timestamp
       MDC.put("httpStatus", response.status.intValue.toString)
-      MDC.put("httpDuration", duration.toString)
+      MDC.put("httpResponseHeaders", response.headers.filter(isInterestingResponseHeader).sortBy(_.lowercaseName).mkString(", "))
+      MDC.put("httpApplicationTime", duration.toString)
       val message = s"${request.method} ${request.uri.path} returned ${response.status} in ${duration}ms"
       response.status match {
+        case Unauthorized => log.info(message)
         case ServerError(_) => log.error(message)
         case ClientError(_) => log.warn(message)
         case _ => log.info(message)
@@ -120,4 +126,20 @@ trait MonitoringDirectives {
   }
 }
 
-object MonitoringDirectives extends MonitoringDirectives
+object MonitoringDirectives extends MonitoringDirectives {
+  private val interestingRequestHeaders = Set(
+    `Accept-Encoding`.lowercaseName,
+    `User-Agent`.lowercaseName,
+    "via",
+    `X-Forwarded-For`.lowercaseName,
+    "x-requested-with")
+
+  private val interestingResponseHeaders = Set(
+    `Cache-Control`.lowercaseName,
+    `Content-Length`.lowercaseName,
+    `WWW-Authenticate`.lowercaseName)
+
+  private def isInterestingRequestHeader(header: HttpHeader) = interestingRequestHeaders.contains(header.lowercaseName)
+
+  private def isInterestingResponseHeader(header: HttpHeader) = interestingResponseHeaders.contains(header.lowercaseName)
+}
