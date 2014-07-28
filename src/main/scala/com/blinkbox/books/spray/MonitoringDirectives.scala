@@ -14,6 +14,7 @@ import spray.routing.directives.{BasicDirectives, ExecutionDirectives}
 trait MonitoringDirectives {
   import BasicDirectives._
   import ExecutionDirectives._
+  import MonitoringDirectives._
 
   /**
    * A magnet to bind to an SLF4J `Logger` using implicit conversions.
@@ -110,22 +111,6 @@ trait MonitoringDirectives {
     }
   }
 
-  private def isInterestingRequestHeader(header: HttpHeader) = header.lowercaseName match {
-    case `Accept-Encoding`.lowercaseName => true
-    case `User-Agent`.lowercaseName => true
-    case "via" => true
-    case `X-Forwarded-For`.lowercaseName => true
-    case "x-requested-with" => true
-    case _ => false
-  }
-
-  private def isInterestingResponseHeader(header: HttpHeader) = header.lowercaseName match {
-    case `Cache-Control`.lowercaseName => true
-    case `Content-Length`.lowercaseName => true
-    case `WWW-Authenticate`.lowercaseName => true
-    case _ => false
-  }
-
   // an exception handler based on the default exception handler logic, but which uses the standard
   // logger rather than LoggingContext so that the MDC information is logged with the error.
   private def monitorExceptionHandler(log: Logger) = ExceptionHandler {
@@ -141,4 +126,20 @@ trait MonitoringDirectives {
   }
 }
 
-object MonitoringDirectives extends MonitoringDirectives
+object MonitoringDirectives extends MonitoringDirectives {
+  private val interestingRequestHeaders = Set(
+    `Accept-Encoding`.lowercaseName,
+    `User-Agent`.lowercaseName,
+    "via",
+    `X-Forwarded-For`.lowercaseName,
+    "x-requested-with")
+
+  private val interestingResponseHeaders = Set(
+    `Cache-Control`.lowercaseName,
+    `Content-Length`.lowercaseName,
+    `WWW-Authenticate`.lowercaseName)
+
+  private def isInterestingRequestHeader(header: HttpHeader) = interestingRequestHeaders.contains(header.lowercaseName)
+
+  private def isInterestingResponseHeader(header: HttpHeader) = interestingResponseHeaders.contains(header.lowercaseName)
+}
