@@ -1,5 +1,22 @@
 # Change Log
 
+## 0.14.0 ([#23](https://git.mobcastdev.com/Platform/common-spray/pull/23) 2014-08-06 13:45:43)
+
+Replaced some code with common-json
+
+### Breaking changes
+
+- `JsonFormats`.`ExplicitTypeHints` and
+`JsonFormats.ISODateTimeSerializer` have been removed; use the
+corresponding classes in `common-json`.
+
+### Bug fixes
+
+- DateTime query parameters are now parsed correctly if they include a
+milliseconds component.
+- DateTime query parameters are always converted to UTC even if they
+were sent in a different time zone.
+
 ## 0.13.1 ([#21](https://git.mobcastdev.com/Platform/common-spray/pull/21) 2014-07-25 17:40:19)
 
 Log more info from HTTP requests
