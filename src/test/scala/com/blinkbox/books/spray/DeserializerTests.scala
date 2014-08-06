@@ -1,7 +1,7 @@
 package com.blinkbox.books.spray
 
 import com.blinkbox.books.spray.v1.Version1JsonSupport
-import org.joda.time.DateTime
+import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.ISODateTimeFormat
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -50,15 +50,33 @@ class DeserializerTests extends FunSuite with ScalatestRouteTest with PartialFun
     }
   }
 
-  test("deserialises DateTime from query parameter") {
+  test("deserialises DateTime without milliseconds in UTC time zone from query parameter") {
     Get(s"/datetime?value=2014-05-17T14:00:05Z") ~> route ~> check {
-      assert(responseAs[DateTime] == ISODateTimeFormat.dateTimeNoMillis().parseDateTime("2014-05-17T14:00:05Z"))
+      assert(responseAs[DateTime] == new DateTime(2014, 5, 17, 14, 0, 5, DateTimeZone.UTC))
+    }
+  }
+
+  test("deserialises DateTime without milliseconds in non-UTC time zone from query parameter as UTC") {
+    Get(s"/datetime?value=2014-05-17T14:00:05%2B03:00") ~> route ~> check {
+      assert(responseAs[DateTime] == new DateTime(2014, 5, 17, 11, 0, 5, DateTimeZone.UTC))
+    }
+  }
+
+  test("deserialises DateTime with milliseconds in UTC time zone from query parameter") {
+    Get(s"/datetime?value=2014-05-17T14:00:05.367Z") ~> route ~> check {
+      assert(responseAs[DateTime] == new DateTime(2014, 5, 17, 14, 0, 5, 367, DateTimeZone.UTC))
+    }
+  }
+
+  test("deserialises DateTime with milliseconds in non-UTC time zone from query parameter as UTC") {
+    Get(s"/datetime?value=2014-05-17T14:00:05.367%2B03:00") ~> route ~> check {
+      assert(responseAs[DateTime] == new DateTime(2014, 5, 17, 11, 0, 5, 367, DateTimeZone.UTC))
     }
   }
 
   test("DateTime deserialiser rejects invalid value with correct error message") {
     val pf: PartialFunction[Rejection, Boolean] = {
-      case MalformedQueryParamRejection("value", "'2014-05-17T14:00:05' is not a valid yyyy-MM-dd'T'HH:mm:ss'Z date format value", Some(_)) => true
+      case MalformedQueryParamRejection("value", "'2014-05-17T14:00:05' is not a valid ISO date format value", Some(_)) => true
     }
 
     Get(s"/datetime?value=2014-05-17T14:00:05") ~> route ~> check {

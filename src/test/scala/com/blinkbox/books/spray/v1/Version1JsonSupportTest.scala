@@ -1,5 +1,6 @@
 package com.blinkbox.books.spray.v1
 
+import com.blinkbox.books.json.ExplicitTypeHints
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -7,7 +8,6 @@ import spray.http.HttpEntity
 import spray.http.HttpCharsets._
 import spray.httpx.marshalling._
 import spray.httpx.unmarshalling._
-import com.blinkbox.books.spray.JsonFormats.ExplicitTypeHints
 
 case class Employee(fname: String, name: String, age: Int, id: Long, boardMember: Boolean) {
   require(!boardMember || age > 40, "Board members must be older than 40")
