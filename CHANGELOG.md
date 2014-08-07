@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.14.1 ([#24](https://git.mobcastdev.com/Platform/common-spray/pull/24) 2014-08-07 16:12:21)
+
+Split out the logging of HTTP headers
+
+### Improvements
+
+Interesting HTTP headers are now logged under their own key, e.g.
+`httpUserAgent` or `httpXForwardedFor` rather than being lumped
+together under `httpRequestHeaders` and `httpResponseHeaders`. This
+will enable searches to be done on them more easily.
+
 ## 0.14.0 ([#23](https://git.mobcastdev.com/Platform/common-spray/pull/23) 2014-08-06 13:45:43)
 
 Replaced some code with common-json
