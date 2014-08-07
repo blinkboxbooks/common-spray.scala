@@ -92,13 +92,19 @@ trait MonitoringDirectives {
     MDC.put("httpMethod", request.method.name)
     MDC.put("httpPath", request.uri.path.toString())
     MDC.put("httpPathAndQuery", request.uri.toRelative.toString())
-    MDC.put("httpRequestHeaders", request.headers.filter(isInterestingRequestHeader).sortBy(_.lowercaseName).mkString(", "))
+    request.headers.map(h => (requestHeaderMdcKeys.get(h.lowercaseName), h.value)).foreach {
+      case (Some(k), v) => MDC.put(k, v)
+      case _ =>
+    }
     MDC.put("httpClientIP", request.clientIP.getOrElse("").toString)
     val timestamp = System.currentTimeMillis
     ctx.withHttpResponseMapped { response =>
       val duration = System.currentTimeMillis - timestamp
       MDC.put("httpStatus", response.status.intValue.toString)
-      MDC.put("httpResponseHeaders", response.headers.filter(isInterestingResponseHeader).sortBy(_.lowercaseName).mkString(", "))
+      response.headers.map(h => (responseHeaderMdcKeys.get(h.lowercaseName), h.value)).foreach {
+        case (Some(k), v) => MDC.put(k, v)
+        case _ =>
+      }
       MDC.put("httpApplicationTime", duration.toString)
       val message = s"${request.method} ${request.uri.path} returned ${response.status} in ${duration}ms"
       response.status match {
@@ -127,19 +133,15 @@ trait MonitoringDirectives {
 }
 
 object MonitoringDirectives extends MonitoringDirectives {
-  private val interestingRequestHeaders = Set(
-    `Accept-Encoding`.lowercaseName,
-    `User-Agent`.lowercaseName,
-    "via",
-    `X-Forwarded-For`.lowercaseName,
-    "x-requested-with")
+  private val requestHeaderMdcKeys = Map(
+    `Accept-Encoding`.lowercaseName -> "httpAcceptEncoding",
+    `User-Agent`.lowercaseName -> "httpUserAgent",
+    "via" -> "httpVia",
+    `X-Forwarded-For`.lowercaseName -> "httpXForwardedFor",
+    "x-requested-with" -> "httpXRequestedWith")
 
-  private val interestingResponseHeaders = Set(
-    `Cache-Control`.lowercaseName,
-    `Content-Length`.lowercaseName,
-    `WWW-Authenticate`.lowercaseName)
-
-  private def isInterestingRequestHeader(header: HttpHeader) = interestingRequestHeaders.contains(header.lowercaseName)
-
-  private def isInterestingResponseHeader(header: HttpHeader) = interestingResponseHeaders.contains(header.lowercaseName)
+  private val responseHeaderMdcKeys = Map(
+    `Cache-Control`.lowercaseName -> "httpCacheControl",
+    `Content-Length`.lowercaseName -> "httpContentLength",
+    `WWW-Authenticate`.lowercaseName -> "httpWWWAuthenticate")
 }
