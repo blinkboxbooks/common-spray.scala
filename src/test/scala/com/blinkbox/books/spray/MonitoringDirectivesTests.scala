@@ -126,11 +126,11 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       RawHeader("X-Requested-With", "XmlHttpRequest") ~>
       { monitor() { complete(OK) } } ~> check {
       val mdc = mdcRef.get()
-      assert(mdc.get("httpRequestHeaders").asInstanceOf[String] contains "Accept-Encoding: gzip")
-      assert(mdc.get("httpRequestHeaders").asInstanceOf[String] contains "User-Agent: MyClient/1.1")
-      assert(mdc.get("httpRequestHeaders").asInstanceOf[String] contains "Via: 1.1 www.example.org")
-      assert(mdc.get("httpRequestHeaders").asInstanceOf[String] contains "X-Forwarded-For: 192.168.1.27")
-      assert(mdc.get("httpRequestHeaders").asInstanceOf[String] contains "X-Requested-With: XmlHttpRequest")
+      assert(mdc.get("httpAcceptEncoding").asInstanceOf[String] contains "gzip")
+      assert(mdc.get("httpUserAgent").asInstanceOf[String] contains "MyClient/1.1")
+      assert(mdc.get("httpVia").asInstanceOf[String] contains "1.1 www.example.org")
+      assert(mdc.get("httpXForwardedFor").asInstanceOf[String] contains "192.168.1.27")
+      assert(mdc.get("httpXRequestedWith").asInstanceOf[String] contains "XmlHttpRequest")
     }
   }
 
@@ -152,9 +152,9 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       ) { complete(OK) }
     } } ~> check {
       val mdc = mdcRef.get()
-      assert(mdc.get("httpResponseHeaders").asInstanceOf[String] contains "Cache-Control: no-store")
-      assert(mdc.get("httpResponseHeaders").asInstanceOf[String] contains "Content-Length: 1234")
-      assert(mdc.get("httpResponseHeaders").asInstanceOf[String] contains "WWW-Authenticate: http realm=test")
+      assert(mdc.get("httpCacheControl").asInstanceOf[String] contains "no-store")
+      assert(mdc.get("httpContentLength").asInstanceOf[String] contains "1234")
+      assert(mdc.get("httpWWWAuthenticate").asInstanceOf[String] contains "http realm=test")
     }
   }
 
