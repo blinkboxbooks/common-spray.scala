@@ -1,12 +1,11 @@
 package com.blinkbox.books.spray
 
-import akka.actor.ActorSystem
 import com.codahale.metrics.health.HealthCheck
-import org.json4s.JsonAST.{JString, JBool}
+import org.json4s.JsonAST.{JBool, JString}
 import org.json4s.jackson.JsonMethods._
 import org.mockito.Mockito.when
-import org.scalatest.{Matchers, FunSuite}
 import org.scalatest.mock.MockitoSugar
+import org.scalatest.{FunSuite, Matchers}
 import spray.http.CacheDirectives._
 import spray.http.HttpHeaders._
 import spray.http.MediaTypes._
@@ -95,7 +94,7 @@ class HealthCheckHttpServiceTests extends FunSuite with ScalatestRouteTest with 
 
   private def basicHealthCheckService(root: String = "/") =
     new HealthCheckHttpService {
-      override implicit def actorRefFactory = ActorSystem("test")
+      override implicit def actorRefFactory = system
       override val basePath = Path(root)
     }
 }
