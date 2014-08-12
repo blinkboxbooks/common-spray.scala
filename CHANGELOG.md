@@ -1,5 +1,21 @@
 # Change Log
 
+## 0.15.0 ([#25](https://git.mobcastdev.com/Platform/common-spray/pull/25) 2014-08-12 09:25:00)
+
+Added health checks and http bind checking
+
+### New features
+
+- Added a minimal `HttpServer` class which checks that the HTTP bind
+succeeded.
+- Updated the `HealthCheckHttpService` to have `/health/ping` and
+`/health/threads` endpoints like the Codahale metrics ones.
+
+### Improvements
+
+- The health check service now uses its own execution context so it
+shouldn’t interfere with the main service.
+
 ## 0.14.1 ([#24](https://git.mobcastdev.com/Platform/common-spray/pull/24) 2014-08-07 16:12:21)
 
 Split out the logging of HTTP headers
