@@ -1,41 +1,18 @@
 package com.blinkbox.books.spray
 
 import com.blinkbox.books.json.DefaultFormats
-import org.joda.time.format.{DateTimeFormatterBuilder, ISODateTimeFormat}
-import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s._
-import spray.httpx.unmarshalling.{FromStringDeserializer, MalformedContent}
-
-import scala.util.control.NonFatal
 
 /**
  * Definitions for common data formats used in service requests and responses.
  */
 object JsonFormats {
 
-  /**
-   * Deserializer to parse BigDecimal values in query parameters
-   */
-  implicit val BigDecimalDeserializer = new FromStringDeserializer[BigDecimal] {
-    def apply(value: String) =
-      try Right(BigDecimal(value))
-      catch {
-        case NonFatal(ex) => Left(MalformedContent(s"'$value' is not a valid 128-bit BigDecimal value", ex))
-      }
-  }
+  @deprecated("Use com.blinkbox.books.spray.unmarshalling.BigDecimalSerializer instead", "0.16.0")
+  implicit val BigDecimalDeserializer = unmarshalling.BigDecimalDeserializer
 
-  /**
-   * Deserializer to parse Joda DateTime values in query parameters
-   */
-  implicit val ISODateTimeDeserializer = new FromStringDeserializer[DateTime] {
-    val parsers = Array(ISODateTimeFormat.dateTime.getParser, ISODateTimeFormat.dateTimeNoMillis.getParser)
-    val format = new DateTimeFormatterBuilder().append(null, parsers).toFormatter
-    def apply(value: String) =
-      try Right(format.parseDateTime(value).withZone(DateTimeZone.UTC))
-      catch {
-        case NonFatal(ex) => Left(MalformedContent(s"'$value' is not a valid ISO date format value", ex))
-      }
-  }
+  @deprecated("Use com.blinkbox.books.spray.unmarshalling.ISODateTimeDeserializer instead", "0.16.0")
+  implicit val ISODateTimeDeserializer = unmarshalling.ISODateTimeDeserializer
 
   /**
    * Custom JSON format that performs JSON serialisation in a standard way.
