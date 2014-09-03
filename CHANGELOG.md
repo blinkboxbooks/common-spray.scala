@@ -1,5 +1,26 @@
 # Change Log
 
+## 0.16.0 ([#26](https://git.mobcastdev.com/Platform/common-spray/pull/26) 2014-09-03 17:20:17)
+
+Cross compiles to Scala 2.11, and no Swagger
+
+### Breaking changes
+
+- Removed Swagger v1 dependency and annotations as we’re going to dump
+support for this documentation format (we never really implemented it
+anyway) and use a YAML-based format for our v2 APIs.
+
+### Improvements
+
+- Now cross-compiles to Scala 2.11
+
+### Deprecations
+
+- `BigDecimalDeserializer` and `ISODateTimeDeserializer` in
+`com.blinkbox.books.spray.JsonFormats` are now deprecated and point to
+`com.blinkbox.books.spray.unmarshalling` package as these classes have
+nothing to do with JSON.
+
 ## 0.15.0 ([#25](https://git.mobcastdev.com/Platform/common-spray/pull/25) 2014-08-12 09:25:00)
 
 Added health checks and http bind checking
