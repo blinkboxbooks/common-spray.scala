@@ -30,6 +30,13 @@ class HealthCheckHttpServiceTests extends FunSuite with ScalatestRouteTest with 
     }
   }
 
+  test("Ping returns an X-App-Version header") {
+    val service = basicHealthCheckService()
+    Get("/health/ping") ~> service.routes ~> check {
+      assert(header("X-App-Version").isDefined)
+    }
+  }
+
   test("Health report returns application/json content") {
     val service = basicHealthCheckService()
     Get("/health/report") ~> service.routes ~> check {
@@ -77,6 +84,13 @@ class HealthCheckHttpServiceTests extends FunSuite with ScalatestRouteTest with 
     }
   }
 
+  test("Health report returns an X-App-Version header") {
+    val service = basicHealthCheckService()
+    Get("/health/report") ~> service.routes ~> check {
+      assert(header("X-App-Version").isDefined)
+    }
+  }
+
   test("Thread dump returns a thread dump as text/plain content") {
     val service = basicHealthCheckService()
     Get("/health/threads") ~> service.routes ~> check {
@@ -89,6 +103,13 @@ class HealthCheckHttpServiceTests extends FunSuite with ScalatestRouteTest with 
     val service = basicHealthCheckService()
     Get("/health/threads") ~> service.routes ~> check {
       assert(header[`Cache-Control`] == Some(`Cache-Control`(`no-store`)))
+    }
+  }
+
+  test("Thread dump returns an X-App-Version header") {
+    val service = basicHealthCheckService()
+    Get("/health/threads") ~> service.routes ~> check {
+      assert(header("X-App-Version").isDefined)
     }
   }
 
