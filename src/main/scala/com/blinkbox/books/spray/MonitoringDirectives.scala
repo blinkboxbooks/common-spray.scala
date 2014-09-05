@@ -1,20 +1,20 @@
 package com.blinkbox.books.spray
 
+import com.blinkbox.books.jar.JarManifest
 import org.slf4j.{Logger, MDC}
 import spray.http.HttpHeaders._
-import scala.util.control.NonFatal
-import spray.http.{HttpHeader, RequestProcessingException, IllegalRequestException}
 import spray.http.StatusCodes._
+import spray.http.{IllegalRequestException, RequestProcessingException}
 import spray.routing.{Directive0, ExceptionHandler, RejectionHandler}
-import spray.routing.directives.{BasicDirectives, ExecutionDirectives}
+
+import scala.util.control.NonFatal
 
 /**
  * Provides directives for monitoring the runtime behaviour of services.
  */
 trait MonitoringDirectives {
-  import BasicDirectives._
-  import ExecutionDirectives._
-  import MonitoringDirectives._
+  import com.blinkbox.books.spray.MonitoringDirectives._
+  import spray.routing.Directives._
 
   /**
    * A magnet to bind to an SLF4J `Logger` using implicit conversions.
@@ -89,6 +89,7 @@ trait MonitoringDirectives {
   private def logRequestResponseDetails(log: Logger): Directive0 = mapRequestContext { ctx =>
     val request = ctx.request
     MDC.put("timestamp", System.currentTimeMillis.toString)
+    MDC.put("facilityVersion", JarManifest.blinkboxDefault.flatMap(_.implementationVersion).getOrElse("???"))
     MDC.put("httpMethod", request.method.name)
     MDC.put("httpPath", request.uri.path.toString())
     MDC.put("httpPathAndQuery", request.uri.toRelative.toString())
