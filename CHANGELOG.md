@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.16.1 ([#27](https://git.mobcastdev.com/Platform/common-spray/pull/27) 2014-09-05 14:47:41)
+
+Added app version to monitoring/health checks
+
+### Improvements
+
+- Now returns an `X-App-Version` header from health endpoints with the
+current version of the service.
+- Logs an extra `facilityVersion` into the logging of requests and
+responses for the same reason.
+
 ## 0.16.0 ([#26](https://git.mobcastdev.com/Platform/common-spray/pull/26) 2014-09-03 17:20:17)
 
 Cross compiles to Scala 2.11, and no Swagger
