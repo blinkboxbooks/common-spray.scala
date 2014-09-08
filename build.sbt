@@ -17,7 +17,6 @@ libraryDependencies ++= {
   Seq(
     "io.spray"              %%  "spray-can"             % sprayV,
     "io.spray"              %%  "spray-routing"         % sprayV,
-    "io.spray"              %%  "spray-json"            % "1.2.6",
     "com.typesafe.akka"     %%  "akka-actor"            % akkaV,
     "com.typesafe.akka"     %%  "akka-slf4j"            % akkaV,
     "com.codahale.metrics"  %   "metrics-core"          % metricsV,
