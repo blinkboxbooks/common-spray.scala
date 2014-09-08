@@ -11,13 +11,12 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf
 resolvers += "spray" at "http://repo.spray.io/"
 
 libraryDependencies ++= {
-  val akkaV = "2.3.5"
+  val akkaV = "2.3.6"
   val sprayV = "1.3.1"
   val metricsV = "3.0.2"
   Seq(
     "io.spray"              %%  "spray-can"             % sprayV,
     "io.spray"              %%  "spray-routing"         % sprayV,
-    "io.spray"              %%  "spray-json"            % "1.2.6",
     "com.typesafe.akka"     %%  "akka-actor"            % akkaV,
     "com.typesafe.akka"     %%  "akka-slf4j"            % akkaV,
     "com.codahale.metrics"  %   "metrics-core"          % metricsV,
@@ -25,7 +24,7 @@ libraryDependencies ++= {
     "com.codahale.metrics"  %   "metrics-json"          % metricsV,
     "com.codahale.metrics"  %   "metrics-jvm"           % metricsV,
     "com.blinkbox.books"    %%  "common-lang"           % "0.1.0",
-    "com.blinkbox.books"    %%  "common-config"         % "1.0.2",
+    "com.blinkbox.books"    %%  "common-config"         % "1.2.1",
     "com.blinkbox.books"    %%  "common-json"           % "0.2.1",
     "com.blinkbox.books"    %%  "common-scala-test"     % "0.3.0"   % "test",
     "io.spray"              %%  "spray-testkit"         % sprayV    % "test",
