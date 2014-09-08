@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.16.2 ([#28](https://git.mobcastdev.com/Platform/common-spray/pull/28) 2014-09-08 12:57:38)
+
+Dependency updates
+
+Patch to update dependency versions
+
 ## 0.16.1 ([#27](https://git.mobcastdev.com/Platform/common-spray/pull/27) 2014-09-05 14:47:41)
 
 Added app version to monitoring/health checks
