@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.17.0 ([#29](https://git.mobcastdev.com/Platform/common-spray/pull/29) 2014-09-22 11:32:41)
+
+Placeholder for v2 API json support
+
+### New feature
+
+- Marshaller and unmarshaller for `application/vnd.blinkbox.books.v2+json` media type.
+
+This PR contains bare minimum to get going. We still need to decide what common model classes for paging, error messages, etc. will be in v2 API.
+
 ## 0.16.2 ([#28](https://git.mobcastdev.com/Platform/common-spray/pull/28) 2014-09-08 12:57:38)
 
 Dependency updates
