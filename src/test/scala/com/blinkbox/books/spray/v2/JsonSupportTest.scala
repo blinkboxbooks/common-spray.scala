@@ -56,7 +56,7 @@ class JsonSupportTest extends FunSuite with v2.JsonSupport {
 }
 
 @RunWith(classOf[JUnitRunner])
-class Version1JsonSupportResponseTypeHintsTest extends FunSuite with v2.JsonSupport {
+class JsonSupportResponseTypeHintsTest extends FunSuite with v2.JsonSupport {
 
   override val responseTypeHints = ExplicitTypeHints(Map(classOf[Employee] -> "emp"))
 
