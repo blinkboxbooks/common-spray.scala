@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.17.1 ([#30](https://git.mobcastdev.com/Platform/common-spray/pull/30) 2014-09-30 10:50:56)
+
+Bumping versions
+
+### Improvements
+
+* Bumped common-lang, common-config and common-json
+
 ## 0.17.0 ([#29](https://git.mobcastdev.com/Platform/common-spray/pull/29) 2014-09-22 11:32:41)
 
 Placeholder for v2 API json support
