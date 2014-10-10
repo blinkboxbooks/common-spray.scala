@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FunSuite, PartialFunctionValues}
 import spray.httpx.Json4sJacksonSupport
-import spray.routing.{HttpService, MalformedQueryParamRejection, Rejection}
+import spray.routing._
 import spray.testkit.ScalatestRouteTest
 
 trait TestService extends HttpService with Directives with Json4sJacksonSupport {
