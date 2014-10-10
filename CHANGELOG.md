@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.17.2 ([#32](https://git.mobcastdev.com/Platform/common-spray/pull/32) 2014-10-10 14:46:40)
+
+Upgrade common-json dependency for better error messages 
+
+patch
+
+- Upgraded common-json dependency to get the better error messages from version 0.2.3
+- Added test for this behaviour
+
 ## 0.17.1 ([#30](https://git.mobcastdev.com/Platform/common-spray/pull/30) 2014-09-30 10:50:56)
 
 Bumping versions
