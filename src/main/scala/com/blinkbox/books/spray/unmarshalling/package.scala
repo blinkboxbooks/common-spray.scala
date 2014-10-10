@@ -2,16 +2,11 @@ package com.blinkbox.books.spray
 
 import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.{DateTimeFormatterBuilder, ISODateTimeFormat}
-import org.json4s.MappingException
-import org.slf4j.LoggerFactory
 import spray.httpx.unmarshalling._
-
-import scala.util.{Success, Try, Failure}
 import scala.util.control.NonFatal
 
 package object unmarshalling {
 
-  val log = LoggerFactory.getLogger(getClass)
   /**
    * Deserializer to parse BigDecimal values in query parameters.
    */
