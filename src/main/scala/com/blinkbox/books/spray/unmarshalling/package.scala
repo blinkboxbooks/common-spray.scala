@@ -3,7 +3,6 @@ package com.blinkbox.books.spray
 import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.{DateTimeFormatterBuilder, ISODateTimeFormat}
 import spray.httpx.unmarshalling._
-
 import scala.util.control.NonFatal
 
 package object unmarshalling {

@@ -2,6 +2,7 @@ package com.blinkbox.books.spray.v2
 
 import com.blinkbox.books.json.ExplicitTypeHints
 import com.blinkbox.books.spray.v2
+import org.joda.time.DateTime
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -10,26 +11,30 @@ import spray.http.HttpEntity
 import spray.httpx.marshalling.marshal
 import spray.httpx.unmarshalling.{MalformedContent, PimpedHttpEntity}
 
-case class Employee(fname: String, name: String, age: Int, id: Long, boardMember: Boolean) {
+case class Employee(fname: String, name: String, age: Int, id: Long, boardMember: Boolean, hiredDate: DateTime) {
   require(!boardMember || age > 40, "Board members must be older than 40")
 }
 
 object Employee {
-  val simple = Employee("Frank", "Smith", 42, 12345, boardMember = false)
-  val json = """{"fname":"Frank","name":"Smith","age":42,"id":12345,"boardMember":false}"""
-  val hintedJson = """{"type":"emp","fname":"Frank","name":"Smith","age":42,"id":12345,"boardMember":false}"""
 
-  val utf8 = Employee("Fränk", "Smi√", 42, 12345, boardMember = false)
+  val hiredDate = DateTime.parse("2014-05-17T14:00:05Z")
+  val simple = Employee("Frank", "Smith", 42, 12345, boardMember = false, hiredDate)
+  val json = """{"fname":"Frank","name":"Smith","age":42,"id":12345,"boardMember":false,"hiredDate":"2014-05-17T14:00:05.000Z"}"""
+  val hintedJson = """{"type":"emp","fname":"Frank","name":"Smith","age":42,"id":12345,"boardMember":false,"hiredDate":"2014-05-17T14:00:05.000Z"}"""
+
+  val utf8 = Employee("Fränk", "Smi√", 42, 12345, boardMember = false, hiredDate)
   val utf8json =
     """{
       |  "fname": "Fränk",
       |  "name": "Smi√",
       |  "age": 42,
       |  "id": 12345,
-      |  "boardMember": false
+      |  "boardMember": false,
+      |  "hiredDate": "2014-05-17T14:00:05Z"
       |}""".stripMargin.getBytes(`UTF-8`.nioCharset)
 
-  val illegalEmployeeJson = """{"fname":"Little Boy","name":"Smith","age":7,"id":12345,"boardMember":true}"""
+  val illegalEmployeeJson = """{"fname":"Little Boy","name":"Smith","age":7,"id":12345,"boardMember":true,"hiredDate":"2014-05-17T14:00:05.000Z"}"""
+  val badDateEmployeeJson = """{"fname":"John","name":"Smith","age":45,"id":12345,"boardMember":true,"hiredDate":"Ceci n'est pas un jour"}"""
 }
 
 @RunWith(classOf[JUnitRunner])
@@ -51,6 +56,11 @@ class JsonSupportTest extends FunSuite with v2.JsonSupport {
     val Left(MalformedContent(msg, Some(_: IllegalArgumentException))) =
       HttpEntity(`application/vnd.blinkbox.books.v2+json`, Employee.illegalEmployeeJson).as[Employee]
     assert(msg == "requirement failed: Board members must be older than 40")
+  }
+
+  test("provide meaningful error messages for date time parse errors") {
+    val Left(MalformedContent(msg, _)) = HttpEntity(`application/vnd.blinkbox.books.v2+json`, Employee.badDateEmployeeJson).as[Employee]
+    assert(msg == "No usable value for hiredDate\n'Ceci n'est pas un jour' is not a valid ISO date")
   }
 
 }

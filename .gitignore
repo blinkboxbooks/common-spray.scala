@@ -26,3 +26,5 @@ project/plugins/project/
 /bin
 *.properties
 
+# Intellij
+atlassian-ide-plugin.xml
