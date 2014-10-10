@@ -25,7 +25,7 @@ libraryDependencies ++= {
     "com.codahale.metrics"  %   "metrics-jvm"           % metricsV,
     "com.blinkbox.books"    %%  "common-lang"           % "0.2.0",
     "com.blinkbox.books"    %%  "common-config"         % "1.4.1",
-    "com.blinkbox.books"    %%  "common-json"           % "0.2.2-SNAPSHOT",
+    "com.blinkbox.books"    %%  "common-json"           % "0.2.3",
     "com.blinkbox.books"    %%  "common-scala-test"     % "0.3.0"   % "test",
     "io.spray"              %%  "spray-testkit"         % sprayV    % "test",
     "com.typesafe.akka"     %%  "akka-testkit"          % akkaV     % "test"

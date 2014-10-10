@@ -33,8 +33,8 @@ object Employee {
       |  "hiredDate": "2014-05-17T14:00:05Z"
       |}""".stripMargin.getBytes(`UTF-8`.nioCharset)
 
-  val illegalEmployeeJson = """{"fname":"Little Boy","name":"Smith","age":7,"id":12345,"boardMember":true, "hiredDate": "2014-05-17T14:00:05.000Z"}"""
-  val badDateEmployeeJson = """{"fname":"John","name":"Smith","age":45,"id":12345,"boardMember":true, "hiredDate": "Ceci n'est pas un jour"}"""
+  val illegalEmployeeJson = """{"fname":"Little Boy","name":"Smith","age":7,"id":12345,"boardMember":true,"hiredDate":"2014-05-17T14:00:05.000Z"}"""
+  val badDateEmployeeJson = """{"fname":"John","name":"Smith","age":45,"id":12345,"boardMember":true,"hiredDate":"Ceci n'est pas un jour"}"""
 }
 
 @RunWith(classOf[JUnitRunner])
@@ -58,8 +58,8 @@ class JsonSupportTest extends FunSuite with v2.JsonSupport {
     assert(msg == "requirement failed: Board members must be older than 40")
   }
 
-  test("provide proper error messages for date time parse errors") {
-    val Left(MalformedContent(msg, _)) =  HttpEntity(`application/vnd.blinkbox.books.v2+json`, Employee.badDateEmployeeJson).as[Employee]
+  test("provide meaningful error messages for date time parse errors") {
+    val Left(MalformedContent(msg, _)) = HttpEntity(`application/vnd.blinkbox.books.v2+json`, Employee.badDateEmployeeJson).as[Employee]
     assert(msg == "No usable value for hiredDate\n'Ceci n'est pas un jour' is not a valid ISO date")
   }
 
