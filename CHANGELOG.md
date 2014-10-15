@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.17.3 ([#33](https://git.mobcastdev.com/Platform/common-spray/pull/33) 2014-10-15 15:10:14)
+
+V2 homogenous ListPage
+
+patch
+
+- Added v2 homogenous ListPage model, as discussed on #books-api-design on slack. 
+
 ## 0.17.2 ([#32](https://git.mobcastdev.com/Platform/common-spray/pull/32) 2014-10-10 14:46:40)
 
 Upgrade common-json dependency for better error messages 
