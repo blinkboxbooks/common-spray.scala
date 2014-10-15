@@ -2,5 +2,5 @@ package com.blinkbox.books.spray.v2
 
 case class ListPage[T] (
   items: List[T],
-  hasNext: Boolean
+  lastPage: Boolean
 )
