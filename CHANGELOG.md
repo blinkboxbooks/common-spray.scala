@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.17.5 ([#35](https://git.mobcastdev.com/Platform/common-spray/pull/35) 2014-11-04 15:31:12)
+
+Use strict mode option parsing by default
+
+patch
+
+- Use strict mode for parsing by default. 
+
 ## 0.17.4 ([#34](https://git.mobcastdev.com/Platform/common-spray/pull/34) 2014-11-04 09:30:30)
 
 Support Validation of Optional fields
