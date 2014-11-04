@@ -2,7 +2,9 @@ package com.blinkbox.books.spray.v2
 
 import com.blinkbox.books.json.ExplicitTypeHints
 import com.blinkbox.books.spray.v2
+import com.blinkbox.books.spray.v2.JsonFormats._
 import org.joda.time.DateTime
+import org.json4s.Formats
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -69,9 +71,16 @@ class JsonSupportTest extends FunSuite with v2.JsonSupport {
     assert(msg == "No usable value for hiredDate\n'Ceci n'est pas un jour' is not a valid ISO date")
   }
 
-  test("throw a mapping exception when a value for an Option[T] can't be converted to the expected type") {
+  test("throw a mapping exception when a value for an Option[T] can't be converted to the expected type in strict mode") {
     val Left(MalformedContent(msg, _)) = HttpEntity(`application/vnd.blinkbox.books.v2+json`, DateBox.invalidDateJson).as[DateBox]
     assert(msg == "No usable value for date\n'Ceci n'est pas un jour' is not a valid ISO date")
+  }
+
+  test("Return none when a value for an Option[T] can't be converted to the expected type in non strict mode") {
+    val withoutStrictMode = new JsonSupport {
+      override implicit def jsonFormats: Formats = blinkboxFormat(strictOptionParsing = false)
+    }
+    assert(HttpEntity(`application/vnd.blinkbox.books.v2+json`, DateBox.invalidDateJson).as[DateBox](withoutStrictMode.jsonUnmarshaller) == Right(DateBox(None)))
   }
 }
 

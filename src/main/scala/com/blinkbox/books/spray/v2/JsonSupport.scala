@@ -21,7 +21,7 @@ trait JsonSupport {
    */
   def responseTypeHints: TypeHints = NoTypeHints
 
-  implicit def jsonUnmarshaller[T: Manifest] =
+  implicit def jsonUnmarshaller[T: Manifest] = {
     Unmarshaller[T](`application/vnd.blinkbox.books.v2+json`) {
       case x: HttpEntity.NonEmpty =>
         try Serialization.read[T](x.asString(defaultCharset = HttpCharsets.`UTF-8`))
@@ -29,6 +29,7 @@ trait JsonSupport {
           case MappingException("unknown error", ite: InvocationTargetException) => throw ite.getCause
         }
     }
+  }
 
   implicit def jsonMarshaller[T <: AnyRef] = {
     val formats = implicitly[Formats] + responseTypeHints
