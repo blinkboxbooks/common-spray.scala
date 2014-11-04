@@ -7,12 +7,18 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import spray.http.HttpCharsets._
-import spray.http.HttpEntity
-import spray.httpx.marshalling.marshal
+import spray.http.{ContentType, HttpEntity}
+import spray.httpx.marshalling.{CollectingMarshallingContext, marshal}
 import spray.httpx.unmarshalling.{MalformedContent, PimpedHttpEntity}
 
 case class Employee(fname: String, name: String, age: Int, id: Long, boardMember: Boolean, hiredDate: DateTime) {
   require(!boardMember || age > 40, "Board members must be older than 40")
+}
+
+case class DateBox(date: Option[DateTime])
+
+object DateBox {
+  val invalidDateJson = """{"date":"Ceci n'est pas un jour"}"""
 }
 
 object Employee {
@@ -40,6 +46,8 @@ object Employee {
 @RunWith(classOf[JUnitRunner])
 class JsonSupportTest extends FunSuite with v2.JsonSupport {
 
+  override implicit def jsonFormats = JsonFormats.blinkboxFormat(strictOptionParsing = true)
+
   test("Provide unmarshalling support for a case class") {
     assert(HttpEntity(`application/vnd.blinkbox.books.v2+json`, Employee.json).as[Employee] == Right(Employee.simple))
   }
@@ -63,6 +71,10 @@ class JsonSupportTest extends FunSuite with v2.JsonSupport {
     assert(msg == "No usable value for hiredDate\n'Ceci n'est pas un jour' is not a valid ISO date")
   }
 
+  test("throw a mapping exception when a value for an Option[T] can't be converted to the expected type") {
+    val Left(MalformedContent(msg, _)) = HttpEntity(`application/vnd.blinkbox.books.v2+json`, DateBox.invalidDateJson).as[DateBox]
+    assert(msg == "No usable value for date\n'Ceci n'est pas un jour' is not a valid ISO date")
+  }
 }
 
 @RunWith(classOf[JUnitRunner])
