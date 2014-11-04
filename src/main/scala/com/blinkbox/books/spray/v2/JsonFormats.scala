@@ -16,7 +16,7 @@ object JsonFormats {
    * @param hints   The object that decides what type fields, if any, to insert into generated JSON,
    * and for deserialising objects from polymorphic lists. By default, no type hints will be used.
    * @param throwOptionMappingExceptions throws a MappingException when a value for key of class
-   * Option[T] value can't be can't be converted to the expected type.
+   * Option[T]'s value can't be converted to the expected type.
    */
   def blinkboxFormat(hints: TypeHints = NoTypeHints, throwOptionMappingExceptions: Boolean = false): Formats = new DefaultFormats {
     override val typeHints: TypeHints = hints
