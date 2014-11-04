@@ -46,8 +46,6 @@ object Employee {
 @RunWith(classOf[JUnitRunner])
 class JsonSupportTest extends FunSuite with v2.JsonSupport {
 
-  override implicit def jsonFormats = JsonFormats.blinkboxFormat(strictOptionParsing = true)
-
   test("Provide unmarshalling support for a case class") {
     assert(HttpEntity(`application/vnd.blinkbox.books.v2+json`, Employee.json).as[Employee] == Right(Employee.simple))
   }
