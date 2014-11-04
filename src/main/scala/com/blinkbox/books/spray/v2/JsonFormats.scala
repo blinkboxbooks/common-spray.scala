@@ -15,10 +15,10 @@ object JsonFormats {
    *
    * @param hints   The object that decides what type fields, if any, to insert into generated JSON,
    * and for deserialising objects from polymorphic lists. By default, no type hints will be used.
-   * @param strictOptionParsing throws a MappingException when a value for key of class
+   * @param strictOptionParsing whether to throw a MappingException when a value for key of class
    * Option[T]'s value can't be converted to the expected type.
    */
-  def blinkboxFormat(hints: TypeHints = NoTypeHints, strictOptionParsing: Boolean = false): Formats = new DefaultFormats {
+  def blinkboxFormat(hints: TypeHints = NoTypeHints, strictOptionParsing: Boolean = true): Formats = new DefaultFormats {
     override val typeHints: TypeHints = hints
     override val typeHintFieldName: String = "type"
     override val strict = strictOptionParsing
