@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.17.4 ([#34](https://git.mobcastdev.com/Platform/common-spray/pull/34) 2014-11-04 09:30:30)
+
+Support Validation of Optional fields
+
+patch 
+
+- Optionally throw a MappingException when a value for a key of type `Option[T]` can't be converted to a `T` when parsing json. 
+
 ## 0.17.3 ([#33](https://git.mobcastdev.com/Platform/common-spray/pull/33) 2014-10-15 15:10:14)
 
 V2 homogenous ListPage
