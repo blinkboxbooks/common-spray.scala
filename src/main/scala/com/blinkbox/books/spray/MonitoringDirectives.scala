@@ -1,7 +1,8 @@
 package com.blinkbox.books.spray
 
 import com.blinkbox.books.jar.JarManifest
-import org.slf4j.{Logger, MDC}
+import com.typesafe.scalalogging.Logger
+import org.slf4j.MDC
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
 import spray.http.{IllegalRequestException, RequestProcessingException}
@@ -36,8 +37,8 @@ trait MonitoringDirectives {
 
   object LoggerMagnet {
     import scala.language.implicitConversions
-    implicit def fromLogger(log: Logger) = new LoggerMagnet(log)
-    implicit def fromUnit(u: Unit)(implicit log: Logger) = new LoggerMagnet(log)
+    implicit def fromLogger(log: Logger): LoggerMagnet = new LoggerMagnet(log)
+    implicit def fromUnit(u: Unit)(implicit log: Logger): LoggerMagnet = new LoggerMagnet(log)
   }
 
   /**
@@ -50,10 +51,6 @@ trait MonitoringDirectives {
    * def monitor()(implicit log: Logger): Directive0
    * }}}
    *
-   * Because this directive uses MDC for logging contextual information, the actor hosting the
-   * routes should extend `DiagnosticActorLogging` which ensures that MDC is available and that
-   * it is reset correctly around the receive of each message.
-   *
    * To ensure that the response is logged correctly this directive will convert any rejections
    * or exceptions into an `HttpResponse` using the default `RejectionHandler` and `ExceptionHandler`
    * implementations, meaning that no subsequent processing of rejections or exceptions can occur.
@@ -65,11 +62,9 @@ trait MonitoringDirectives {
    * explicitly provide a logger.
    *
    * {{{
-   *  class MyHttpService extends HttpServiceActor with DiagnosticActorLogging {
-   *    implicit val log = LoggerFactory.getLogger(classOf[MyHttpService])
-   *
+   *  class MyHttpService extends HttpServiceActor with StrictLogging {
    *    def receive = runRoute {
-   *      monitor() {
+   *      monitor(logger) {
    *        complete(OK) // do something more useful here
    *      }
    *    }
