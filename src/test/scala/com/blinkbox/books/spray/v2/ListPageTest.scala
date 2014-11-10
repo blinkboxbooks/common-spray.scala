@@ -4,8 +4,6 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import spray.routing.HttpService
-import spray.routing.directives.PathDirectives._
-import spray.routing.directives.MethodDirectives._
 import spray.testkit.ScalatestRouteTest
 
 case class BarBox(bar: String)
@@ -30,7 +28,7 @@ class ListPageTest extends FunSuite with ScalatestRouteTest with TestRoute {
   val foobarBoxString = """{"items":[{"bar":"foobar1"}],"lastPage":false}"""
   val emptyBoxString = """{"items":[],"lastPage":false}"""
 
-    test("can construct a ListPage") {
+  test("can construct a ListPage") {
     assert(ListPage(List(BarBox("foobar")), lastPage = true) == expectedPage)
   }
 
