@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.18.0 ([#36](https://git.mobcastdev.com/Platform/common-spray/pull/36) 2014-11-10 15:42:02)
+
+Monitoring directive now uses typesafe Logger
+
+### Breaking changes
+
+- The `monitor` directive now expects a
+`com.typesafe.scalalogging.Logger` rather than an `org.slf4j.Logger`
+instance.
+
 ## 0.17.5 ([#35](https://git.mobcastdev.com/Platform/common-spray/pull/35) 2014-11-04 15:31:12)
 
 Use strict mode option parsing by default
