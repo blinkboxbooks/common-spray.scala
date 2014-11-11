@@ -7,4 +7,4 @@ case class ListPage[T] (
   lastPage: Boolean
 )
 
-case class Link(`type`: String, url: URI)
+case class Link(rel: String, url: URI)
