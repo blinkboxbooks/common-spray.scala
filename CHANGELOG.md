@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.19.0 ([#37](https://git.mobcastdev.com/Platform/common-spray/pull/37) 2014-11-13 12:02:12)
+
+V2 links
+
+### New feature
+
+- Added `Link` class
+
 ## 0.18.0 ([#36](https://git.mobcastdev.com/Platform/common-spray/pull/36) 2014-11-10 15:42:02)
 
 Monitoring directive now uses typesafe Logger
