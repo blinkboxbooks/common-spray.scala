@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.19.1 ([#39](https://git.mobcastdev.com/Platform/common-spray/pull/39) 2014-11-13 17:27:25)
+
+Monitoring directive logger fix
+
+### Bugfix
+
+Typesafe Logging library has a bizarre bug that results in attempts to log with a default implementation of `com.typesafe.scalalogging.Logger` that has no implementation when the logger is passed as a parameter to other methods.  :see_no_evil:
+
 ## 0.19.0 ([#37](https://git.mobcastdev.com/Platform/common-spray/pull/37) 2014-11-13 12:02:12)
 
 V2 links
