@@ -1,11 +1,16 @@
 package com.blinkbox.books.spray
 
 import com.blinkbox.books.jar.JarManifest
+import com.blinkbox.books.json.DefaultFormats
+import com.blinkbox.books.spray.v2._
 import com.typesafe.scalalogging.Logger
+import org.json4s.{NoTypeHints, Formats}
+import org.json4s.jackson.Serialization
 import org.slf4j.MDC
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
 import spray.http.{IllegalRequestException, RequestProcessingException}
+import spray.httpx.marshalling.Marshaller
 import spray.routing.{Directive0, ExceptionHandler, RejectionHandler}
 
 import scala.util.control.NonFatal
@@ -113,18 +118,21 @@ trait MonitoringDirectives {
     }
   }
 
+  implicit def errorMarshaller: Marshaller[Error] =
+    Marshaller.delegate[Error, String](`application/vnd.blinkbox.books.v2+json`)(Serialization.write(_)(DefaultFormats))
+
   // an exception handler based on the default exception handler logic, but which uses the standard
   // logger rather than LoggingContext so that the MDC information is logged with the error.
   private def monitorExceptionHandler(log: Logger) = ExceptionHandler {
     case e: IllegalRequestException => ctx =>
       log.warn("Illegal request", e)
-      ctx.complete(e.status, Option.empty[String])
+      ctx.complete(e.status, Error(e.status.reason.replace(" ", ""), Some(e.status.defaultMessage)))
     case e: RequestProcessingException => ctx =>
       log.error("Failed to process request", e)
-      ctx.complete(e.status, Option.empty[String])
+      ctx.complete(e.status, Error(e.status.reason.replace(" ", ""), Some(e.status.defaultMessage)))
     case NonFatal(e) => ctx =>
       log.error("Unexpected error processing request", e)
-      ctx.complete(InternalServerError, Option.empty[String])
+      ctx.complete(InternalServerError, Error("InternalServerError", Some(InternalServerError.defaultMessage)))
   }
 }
 

@@ -1,17 +1,19 @@
 package com.blinkbox.books.spray
 
 import java.util.concurrent.atomic.AtomicReference
+
+import com.blinkbox.books.spray.v2.`application/vnd.blinkbox.books.v2+json`
 import com.typesafe.scalalogging.Logger
-import org.mockito.invocation.InvocationOnMock
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
+import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatest.FunSuite
 import org.scalatest.mock.MockitoSugar
 import org.slf4j.MDC
-import spray.http.{CacheDirectives, HttpEncodings, HttpEncodingRange, HttpChallenge}
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
+import spray.http._
 import spray.routing.AuthenticationFailedRejection
 import spray.routing.AuthenticationFailedRejection.CredentialsMissing
 import spray.routing.Directives._
@@ -219,4 +221,33 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
     }
   }
 
+  test("MonitorExceptionHandler returns JSON message body for 500 Server error responses") {
+    val log = mock[Logger]
+
+    Get("/path") ~> { monitor(log) { failWith(new RuntimeException("test exception")) } } ~> check {
+      assert(status == InternalServerError)
+      assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
+      assert(body.asString == """{"code":"InternalServerError","developerMessage":"There was an internal server error."}""")
+    }
+  }
+
+  test("MonitorExceptionHandler returns JSON message body for Server error responses") {
+    val log = mock[Logger]
+
+    Get("/path") ~> { monitor(log) { failWith(new RequestProcessingException(ServiceUnavailable)) } } ~> check {
+      assert(status == ServiceUnavailable)
+      assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
+      assert(body.asString == """{"code":"ServiceUnavailable","developerMessage":"The server is currently unavailable (because it is overloaded or down for maintenance)."}""")
+    }
+  }
+
+  test("MonitorExceptionHandler returns JSON message body for Client error responses") {
+    val log = mock[Logger]
+
+    Get("/path") ~> { monitor(log) { failWith(new IllegalRequestException(BadRequest)) } } ~> check {
+      assert(status == BadRequest)
+      assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
+      assert(body.asString == """{"code":"BadRequest","developerMessage":"The request contains bad syntax or cannot be fulfilled."}""")
+    }
+  }
 }
