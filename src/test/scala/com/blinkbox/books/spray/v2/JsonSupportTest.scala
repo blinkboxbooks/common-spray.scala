@@ -9,8 +9,8 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import spray.http.HttpCharsets._
-import spray.http.{ContentType, HttpEntity}
-import spray.httpx.marshalling.{CollectingMarshallingContext, marshal}
+import spray.http.HttpEntity
+import spray.httpx.marshalling.marshal
 import spray.httpx.unmarshalling.{MalformedContent, PimpedHttpEntity}
 
 case class Employee(fname: String, name: String, age: Int, id: Long, boardMember: Boolean, hiredDate: DateTime) {
