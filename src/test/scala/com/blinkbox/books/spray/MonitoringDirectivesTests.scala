@@ -1,14 +1,13 @@
 package com.blinkbox.books.spray
 
 import java.util.concurrent.atomic.AtomicReference
-import com.typesafe.scalalogging.Logger
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.mockito.stubbing.Answer
 import org.scalatest.FunSuite
 import org.scalatest.mock.MockitoSugar
-import org.slf4j.MDC
+import org.slf4j.{Logger, MDC}
 import spray.http.{CacheDirectives, HttpEncodings, HttpEncodingRange, HttpChallenge}
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
