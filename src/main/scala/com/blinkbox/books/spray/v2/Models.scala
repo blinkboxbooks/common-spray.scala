@@ -10,3 +10,5 @@ case class ListPage[T] (
 trait Relation
 
 case class Link(rel: Relation, url: URI)
+
+case class Error(code: String, developerMessage: Option[String])
