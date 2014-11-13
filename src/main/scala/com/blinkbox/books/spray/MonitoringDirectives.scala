@@ -1,8 +1,7 @@
 package com.blinkbox.books.spray
 
 import com.blinkbox.books.jar.JarManifest
-import com.typesafe.scalalogging.Logger
-import org.slf4j.MDC
+import org.slf4j.{Logger, MDC}
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
 import spray.http.{IllegalRequestException, RequestProcessingException}
@@ -62,9 +61,11 @@ trait MonitoringDirectives {
    * explicitly provide a logger.
    *
    * {{{
-   *  class MyHttpService extends HttpServiceActor with StrictLogging {
+   *  class MyHttpService extends HttpServiceActor with DiagnosticActorLogging {
+   *    implicit val log = LoggerFactory.getLogger(classOf[MyHttpService])
+   *
    *    def receive = runRoute {
-   *      monitor(logger) {
+   *      monitor() {
    *        complete(OK) // do something more useful here
    *      }
    *    }
