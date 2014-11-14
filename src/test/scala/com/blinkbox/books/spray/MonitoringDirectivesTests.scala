@@ -18,8 +18,7 @@ import spray.routing.AuthenticationFailedRejection
 import spray.routing.AuthenticationFailedRejection.CredentialsMissing
 import spray.routing.Directives._
 import spray.testkit.ScalatestRouteTest
-import com.blinkbox.books.spray.v2.Implicits.errorMarshallerForV1API
-import com.blinkbox.books.spray.v2.Implicits.errorMarshallerForV2API
+import com.blinkbox.books.spray.v2.Implicits.throwableMarshaller
 
 class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with MockitoSugar with MonitoringDirectives {
 
@@ -32,8 +31,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> { monitor(log, marshaller) { complete(OK) } } ~> check {
+    Get("/path?q=1") ~> { monitor() { complete(OK) } } ~> check {
       assert(messageRef.get() matches "GET /path returned 200 OK in [0-9]+ms")
     }
   }
@@ -47,9 +45,8 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
     val rejection = AuthenticationFailedRejection(CredentialsMissing, `WWW-Authenticate`(HttpChallenge(scheme = "http", realm = "test")) :: Nil)
-    Get("/path?q=1") ~> { monitor(log, marshaller) { reject(rejection) } } ~> check {
+    Get("/path?q=1") ~> { monitor() { reject(rejection) } } ~> check {
       assert(messageRef.get() matches "GET /path returned 401 Unauthorized in [0-9]+ms")
     }
   }
@@ -63,8 +60,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> { monitor(log, marshaller) { reject() } } ~> check {
+    Get("/path?q=1") ~> { monitor() { reject() } } ~> check {
       assert(messageRef.get() matches "GET /path returned 404 Not Found in [0-9]+ms")
     }
   }
@@ -77,8 +73,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
         messageRef.set(invocation.getArguments.head.asInstanceOf[String])
       }
     })
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> { monitor(log, marshaller) { complete(InternalServerError) } } ~> check {
+    Get("/path?q=1") ~> { monitor() { complete(InternalServerError) } } ~> check {
       assert(messageRef.get() matches "GET /path returned 500 Internal Server Error in [0-9]+ms")
     }
   }
@@ -92,8 +87,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> { monitor(log, marshaller) { dynamic { throw new Exception("o noes!") } } } ~> check {
+    Get("/path?q=1") ~> { monitor() { dynamic { throw new Exception("o noes!") } } } ~> check {
       assert(messageRef.get() matches "GET /path returned 500 Internal Server Error in [0-9]+ms")
     }
   }
@@ -107,8 +101,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> { monitor(log, marshaller) { complete(OK) } } ~> check {
+    Get("/path?q=1") ~> { monitor() { complete(OK) } } ~> check {
       val mdc = mdcRef.get()
       assert(mdc.get("httpMethod") == "GET")
       assert(mdc.get("httpPath") == "/path")
@@ -127,14 +120,13 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
     Get("/path?q=1") ~>
       `Accept-Encoding`(HttpEncodingRange(HttpEncodings.gzip)) ~>
       `User-Agent`("MyClient/1.1") ~>
       RawHeader("Via", "1.1 www.example.org") ~>
       `X-Forwarded-For`("192.168.1.27") ~>
       RawHeader("X-Requested-With", "XmlHttpRequest") ~>
-      { monitor(log, marshaller) { complete(OK) } } ~> check {
+      { monitor() { complete(OK) } } ~> check {
       val mdc = mdcRef.get()
       assert(mdc.get("httpAcceptEncoding").asInstanceOf[String] contains "gzip")
       assert(mdc.get("httpUserAgent").asInstanceOf[String] contains "MyClient/1.1")
@@ -153,9 +145,8 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
     Get("/path?q=1") ~>
-      `Accept-Encoding`(HttpEncodingRange(HttpEncodings.gzip)) ~> { monitor(log, marshaller) {
+      `Accept-Encoding`(HttpEncodingRange(HttpEncodings.gzip)) ~> { monitor() {
       respondWithHeaders(
         `Cache-Control`(CacheDirectives.`no-store`),
         `Content-Length`(1234),
@@ -178,8 +169,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> `Remote-Address`("192.168.0.1") ~> { monitor(log, marshaller) { complete(OK) } } ~> check {
+    Get("/path?q=1") ~> `Remote-Address`("192.168.0.1") ~> { monitor() { complete(OK) } } ~> check {
       val mdc = mdcRef.get()
       assert(mdc.get("httpClientIP") == "192.168.0.1")
     }
@@ -194,8 +184,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> RawHeader("Remote-Address", "invalid") ~> { monitor(log, marshaller) { complete(OK) } } ~> check {
+    Get("/path?q=1") ~> RawHeader("Remote-Address", "invalid") ~> { monitor() { complete(OK) } } ~> check {
       val mdc = mdcRef.get()
       assert(mdc.get("httpStatus") == "200")
     }
@@ -210,8 +199,7 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> `X-Forwarded-For`("192.168.1.1", "192.168.1.2") ~> { monitor(log, marshaller) { complete(OK) } } ~> check {
+    Get("/path?q=1") ~> `X-Forwarded-For`("192.168.1.1", "192.168.1.2") ~> { monitor() { complete(OK) } } ~> check {
       val mdc = mdcRef.get()
       assert(mdc.get("httpClientIP") == "192.168.1.1")
     }
@@ -226,70 +214,66 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path?q=1") ~> RawHeader("X-Forwarded-For", "invalid") ~> { monitor(log, marshaller) { complete(OK) } } ~> check {
+    Get("/path?q=1") ~> RawHeader("X-Forwarded-For", "invalid") ~> { monitor() { complete(OK) } } ~> check {
       val mdc = mdcRef.get()
       assert(mdc.get("httpStatus") == "200")
     }
   }
 
-  test("MonitorExceptionHandler returns JSON message body for 500 Server error responses with v2 API marshaller") {
-    val log = mock[Logger]
+  test("MonitorExceptionHandler returns JSON message body for 500 Server error responses with v2 API Throwable marshaller") {
+    implicit val log = mock[Logger]
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path") ~> { monitor(log, marshaller) { failWith(new RuntimeException("test exception")) } } ~> check {
+    Get("/path") ~> { monitor() { failWith(new RuntimeException("test exception")) } } ~> check {
       assert(status == InternalServerError)
       assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
       assert(body.asString == """{"code":"InternalServerError","developerMessage":"There was an internal server error."}""")
     }
   }
 
-  test("MonitorExceptionHandler returns JSON message body for Server error responses with v2 API marshaller") {
-    val log = mock[Logger]
+  test("MonitorExceptionHandler returns JSON message body for Server error responses with v2 API Throwable marshaller") {
+    implicit val log = mock[Logger]
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path") ~> { monitor(log, marshaller) { failWith(new RequestProcessingException(ServiceUnavailable)) } } ~> check {
+    Get("/path") ~> { monitor() { failWith(new RequestProcessingException(ServiceUnavailable)) } } ~> check {
       assert(status == ServiceUnavailable)
       assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
       assert(body.asString == """{"code":"ServiceUnavailable","developerMessage":"The server is currently unavailable (because it is overloaded or down for maintenance)."}""")
     }
   }
 
-  test("MonitorExceptionHandler returns JSON message body for Client error responses with v2 API marshaller") {
-    val log = mock[Logger]
+  test("MonitorExceptionHandler returns JSON message body for Client error responses with v2 API Throwable marshaller") {
+    implicit val log = mock[Logger]
 
-    implicit val marshaller = errorMarshallerForV2API
-    Get("/path") ~> { monitor(log, marshaller) { failWith(new IllegalRequestException(BadRequest)) } } ~> check {
+    Get("/path") ~> { monitor() { failWith(new IllegalRequestException(BadRequest)) } } ~> check {
       assert(status == BadRequest)
       assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
       assert(body.asString == """{"code":"BadRequest","developerMessage":"The request contains bad syntax or cannot be fulfilled."}""")
     }
   }
 
-  test("MonitorExceptionHandler returns no body for 500 Server error responses with v1 API Error marshaller") {
+  test("MonitorExceptionHandler returns no body for 500 Server error responses with v1 API Throwable marshaller") {
     val log = mock[Logger]
+    val marshaller = com.blinkbox.books.spray.v1.Implicits.throwableMarshaller
 
-    implicit val marshaller = errorMarshallerForV1API
     Get("/path") ~> { monitor(log, marshaller) { failWith(new RuntimeException("test exception")) } } ~> check {
       assert(status == InternalServerError)
       assert(entity.isEmpty)
     }
   }
 
-  test("MonitorExceptionHandler returns no body for Server error responses with v1 API Error marshaller") {
+  test("MonitorExceptionHandler returns no body for Server error responses with v1 API Throwable marshaller") {
     val log = mock[Logger]
+    val marshaller = com.blinkbox.books.spray.v1.Implicits.throwableMarshaller
 
-    implicit val marshaller = errorMarshallerForV1API
     Get("/path") ~> { monitor(log, marshaller) { failWith(new RequestProcessingException(ServiceUnavailable)) } } ~> check {
       assert(status == ServiceUnavailable)
       assert(entity.isEmpty)
     }
   }
 
-  test("MonitorExceptionHandler returns no body for Client error responses with v1 API Error marshaller") {
+  test("MonitorExceptionHandler returns no body for Client error responses with v1 API Throwable marshaller") {
     val log = mock[Logger]
+    val marshaller = com.blinkbox.books.spray.v1.Implicits.throwableMarshaller
 
-    implicit val marshaller = errorMarshallerForV1API
     Get("/path") ~> { monitor(log, marshaller) { failWith(new IllegalRequestException(BadRequest)) } } ~> check {
       assert(status == BadRequest)
       assert(entity.isEmpty)

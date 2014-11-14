@@ -2,7 +2,6 @@ package com.blinkbox.books.spray
 
 import com.blinkbox.books.jar.JarManifest
 import org.slf4j.{Logger, MDC}
-import com.blinkbox.books.spray.v2._
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
 import spray.http.{IllegalRequestException, RequestProcessingException}
@@ -19,7 +18,7 @@ trait MonitoringDirectives {
   import spray.routing.Directives._
 
   /**
-   * A magnet to bind to an SLF4J `Logger` and API version-specific Error marshaller using implicit conversions.
+   * A magnet to bind to an SLF4J `Logger` and API version-specific Throwable marshaller using implicit conversions.
    *
    * It may not be obvious why we're using a regular `Logger` instead of the standard spray `LoggingContext`.
    * This is because we want to use MDC, and the MDC implementation in Akka logging (on which `LoggingContext`
@@ -33,13 +32,14 @@ trait MonitoringDirectives {
    * to be the pragmatic solution in Spray.
    *
    * @param log The logger.
-   * @param errorMarshaller The API version-specific error marshaller
+   * @param throwableMarshaller The API version-specific Throwable marshaller
    */
-  class MonitorMagnet(val log: Logger, val errorMarshaller: Marshaller[Error])
+  class MonitorMagnet(val log: Logger, val throwableMarshaller: Marshaller[Throwable])
 
   object MonitorMagnet {
-    implicit def fromTuple(t: (Logger, Marshaller[Error])) = new MonitorMagnet(t._1, t._2)
-    implicit def fromUnit(u: Unit)(implicit log: Logger, errorMarshaller: Marshaller[Error]) =  new MonitorMagnet(log, errorMarshaller)
+    import scala.language.implicitConversions
+    implicit def fromTuple(t: (Logger, Marshaller[Throwable])): MonitorMagnet = new MonitorMagnet(t._1, t._2)
+    implicit def fromUnit(u: Unit)(implicit log: Logger, throwableMarshaller: Marshaller[Throwable]): MonitorMagnet = new MonitorMagnet(log, throwableMarshaller)
   }
 
   /**
@@ -76,7 +76,7 @@ trait MonitoringDirectives {
    */
   def monitor(loggerMagnet: MonitorMagnet): Directive0 =
     logRequestResponseDetails(loggerMagnet.log) &
-    handleExceptions(monitorExceptionHandler(loggerMagnet.log, loggerMagnet.errorMarshaller)) &
+    handleExceptions(monitorExceptionHandler(loggerMagnet.log, loggerMagnet.throwableMarshaller)) &
     handleRejections(RejectionHandler.Default)
 
   // this directive is built around mapRequestContext/withHttpResponseMapped to ensure that the
@@ -118,18 +118,18 @@ trait MonitoringDirectives {
 
   // an exception handler based on the default exception handler logic, but which uses the standard
   // logger rather than LoggingContext so that the MDC information is logged with the error.
-  private def monitorExceptionHandler(log: Logger, errorMarshaller: Marshaller[Error]) = {
+  private def monitorExceptionHandler(log: Logger, errorMarshaller: Marshaller[Throwable]) = {
     implicit val marshaller = errorMarshaller
     ExceptionHandler {
       case e: IllegalRequestException => ctx =>
         log.warn("Illegal request", e)
-        ctx.complete(e.status, Error(e.status.reason.replace(" ", ""), Some(e.status.defaultMessage)))
+        ctx.complete(e.status, e)
       case e: RequestProcessingException => ctx =>
         log.error("Failed to process request", e)
-        ctx.complete(e.status, Error(e.status.reason.replace(" ", ""), Some(e.status.defaultMessage)))
+        ctx.complete(e.status, e)
       case NonFatal(e) => ctx =>
         log.error("Unexpected error processing request", e)
-        ctx.complete(InternalServerError, Error("InternalServerError", Some(InternalServerError.defaultMessage)))
+        ctx.complete(InternalServerError, e)
     }
   }
 }
