@@ -49,7 +49,7 @@ trait MonitoringDirectives {
    *
    * {{{
    * def monitor(log: Logger, marshaller: Marshaller[Error]): Directive0
-   * def monitor()(implicit log: Logger, marshaller: Marshaller[Error]): Directive0
+   * def monitor()(implicit log: Logger, marshaller: Marshaller[Throwable]): Directive0
    * }}}
    *
    * To ensure that the response is logged correctly this directive will convert any rejections
