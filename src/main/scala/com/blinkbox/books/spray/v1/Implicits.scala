@@ -8,5 +8,4 @@ object Implicits {
    * Throwable marshaller for V1 API responses
    */
   implicit def throwableMarshaller: Marshaller[Throwable] = Marshaller[Throwable] { (_, ctx) => ctx.marshalTo(HttpEntity.Empty) }
-
 }
