@@ -1,9 +1,11 @@
 package com.blinkbox.books.spray
 
 import java.util.concurrent.atomic.AtomicReference
-import org.mockito.invocation.InvocationOnMock
+
+import com.blinkbox.books.spray.v2.`application/vnd.blinkbox.books.v2+json`
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
+import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatest.FunSuite
 import org.scalatest.mock.MockitoSugar
@@ -11,10 +13,12 @@ import org.slf4j.{Logger, MDC}
 import spray.http.{CacheDirectives, HttpEncodings, HttpEncodingRange, HttpChallenge}
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
+import spray.http._
 import spray.routing.AuthenticationFailedRejection
 import spray.routing.AuthenticationFailedRejection.CredentialsMissing
 import spray.routing.Directives._
 import spray.testkit.ScalatestRouteTest
+import com.blinkbox.books.spray.v2.Implicits.throwableMarshaller
 
 class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with MockitoSugar with MonitoringDirectives {
 
@@ -56,7 +60,6 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
       }
     })
 
-
     Get("/path?q=1") ~> { monitor() { reject() } } ~> check {
       assert(messageRef.get() matches "GET /path returned 404 Not Found in [0-9]+ms")
     }
@@ -70,7 +73,6 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
         messageRef.set(invocation.getArguments.head.asInstanceOf[String])
       }
     })
-
     Get("/path?q=1") ~> { monitor() { complete(InternalServerError) } } ~> check {
       assert(messageRef.get() matches "GET /path returned 500 Internal Server Error in [0-9]+ms")
     }
@@ -218,4 +220,63 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
     }
   }
 
+  test("MonitorExceptionHandler returns JSON message body for 500 Server error responses with v2 API Throwable marshaller") {
+    implicit val log = mock[Logger]
+
+    Get("/path") ~> { monitor() { failWith(new RuntimeException("test exception")) } } ~> check {
+      assert(status == InternalServerError)
+      assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
+      assert(body.asString == """{"code":"InternalServerError","developerMessage":"There was an internal server error."}""")
+    }
+  }
+
+  test("MonitorExceptionHandler returns JSON message body for Server error responses with v2 API Throwable marshaller") {
+    implicit val log = mock[Logger]
+
+    Get("/path") ~> { monitor() { failWith(new RequestProcessingException(ServiceUnavailable)) } } ~> check {
+      assert(status == ServiceUnavailable)
+      assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
+      assert(body.asString == """{"code":"ServiceUnavailable","developerMessage":"The server is currently unavailable (because it is overloaded or down for maintenance)."}""")
+    }
+  }
+
+  test("MonitorExceptionHandler returns JSON message body for Client error responses with v2 API Throwable marshaller") {
+    implicit val log = mock[Logger]
+
+    Get("/path") ~> { monitor() { failWith(new IllegalRequestException(BadRequest)) } } ~> check {
+      assert(status == BadRequest)
+      assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
+      assert(body.asString == """{"code":"BadRequest","developerMessage":"The request contains bad syntax or cannot be fulfilled."}""")
+    }
+  }
+
+  test("MonitorExceptionHandler returns no body for 500 Server error responses with v1 API Throwable marshaller") {
+    val log = mock[Logger]
+    val marshaller = com.blinkbox.books.spray.v1.Implicits.throwableMarshaller
+
+    Get("/path") ~> { monitor(log, marshaller) { failWith(new RuntimeException("test exception")) } } ~> check {
+      assert(status == InternalServerError)
+      assert(entity.isEmpty)
+    }
+  }
+
+  test("MonitorExceptionHandler returns no body for Server error responses with v1 API Throwable marshaller") {
+    val log = mock[Logger]
+    val marshaller = com.blinkbox.books.spray.v1.Implicits.throwableMarshaller
+
+    Get("/path") ~> { monitor(log, marshaller) { failWith(new RequestProcessingException(ServiceUnavailable)) } } ~> check {
+      assert(status == ServiceUnavailable)
+      assert(entity.isEmpty)
+    }
+  }
+
+  test("MonitorExceptionHandler returns no body for Client error responses with v1 API Throwable marshaller") {
+    val log = mock[Logger]
+    val marshaller = com.blinkbox.books.spray.v1.Implicits.throwableMarshaller
+
+    Get("/path") ~> { monitor(log, marshaller) { failWith(new IllegalRequestException(BadRequest)) } } ~> check {
+      assert(status == BadRequest)
+      assert(entity.isEmpty)
+    }
+  }
 }

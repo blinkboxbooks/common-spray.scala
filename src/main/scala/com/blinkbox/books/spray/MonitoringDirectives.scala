@@ -5,6 +5,7 @@ import org.slf4j.{Logger, MDC}
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
 import spray.http.{IllegalRequestException, RequestProcessingException}
+import spray.httpx.marshalling.Marshaller
 import spray.routing.{Directive0, ExceptionHandler, RejectionHandler}
 
 import scala.util.control.NonFatal
@@ -17,7 +18,7 @@ trait MonitoringDirectives {
   import spray.routing.Directives._
 
   /**
-   * A magnet to bind to an SLF4J `Logger` using implicit conversions.
+   * A magnet to bind to an SLF4J `Logger` and API version-specific Throwable marshaller using implicit conversions.
    *
    * It may not be obvious why we're using a regular `Logger` instead of the standard spray `LoggingContext`.
    * This is because we want to use MDC, and the MDC implementation in Akka logging (on which `LoggingContext`
@@ -31,13 +32,14 @@ trait MonitoringDirectives {
    * to be the pragmatic solution in Spray.
    *
    * @param log The logger.
+   * @param throwableMarshaller The API version-specific Throwable marshaller
    */
-  class LoggerMagnet(val log: Logger)
+  class MonitorMagnet(val log: Logger, val throwableMarshaller: Marshaller[Throwable])
 
-  object LoggerMagnet {
+  object MonitorMagnet {
     import scala.language.implicitConversions
-    implicit def fromLogger(log: Logger): LoggerMagnet = new LoggerMagnet(log)
-    implicit def fromUnit(u: Unit)(implicit log: Logger): LoggerMagnet = new LoggerMagnet(log)
+    implicit def fromTuple(t: (Logger, Marshaller[Throwable])): MonitorMagnet = new MonitorMagnet(t._1, t._2)
+    implicit def fromUnit(u: Unit)(implicit log: Logger, throwableMarshaller: Marshaller[Throwable]): MonitorMagnet = new MonitorMagnet(log, throwableMarshaller)
   }
 
   /**
@@ -46,8 +48,8 @@ trait MonitoringDirectives {
    * This method uses magnets, but the simplified signatures are:
    *
    * {{{
-   * def monitor(log: Logger): Directive0
-   * def monitor()(implicit log: Logger): Directive0
+   * def monitor(log: Logger, marshaller: Marshaller[Error]): Directive0
+   * def monitor()(implicit log: Logger, marshaller: Marshaller[Throwable]): Directive0
    * }}}
    *
    * To ensure that the response is logged correctly this directive will convert any rejections
@@ -72,9 +74,9 @@ trait MonitoringDirectives {
    *  }
    * }}}
    */
-  def monitor(magnet: LoggerMagnet): Directive0 =
-    logRequestResponseDetails(magnet.log) &
-    handleExceptions(monitorExceptionHandler(magnet.log)) &
+  def monitor(loggerMagnet: MonitorMagnet): Directive0 =
+    logRequestResponseDetails(loggerMagnet.log) &
+    handleExceptions(monitorExceptionHandler(loggerMagnet.log, loggerMagnet.throwableMarshaller)) &
     handleRejections(RejectionHandler.Default)
 
   // this directive is built around mapRequestContext/withHttpResponseMapped to ensure that the
@@ -116,16 +118,19 @@ trait MonitoringDirectives {
 
   // an exception handler based on the default exception handler logic, but which uses the standard
   // logger rather than LoggingContext so that the MDC information is logged with the error.
-  private def monitorExceptionHandler(log: Logger) = ExceptionHandler {
-    case e: IllegalRequestException => ctx =>
-      log.warn("Illegal request", e)
-      ctx.complete(e.status, Option.empty[String])
-    case e: RequestProcessingException => ctx =>
-      log.error("Failed to process request", e)
-      ctx.complete(e.status, Option.empty[String])
-    case NonFatal(e) => ctx =>
-      log.error("Unexpected error processing request", e)
-      ctx.complete(InternalServerError, Option.empty[String])
+  private def monitorExceptionHandler(log: Logger, errorMarshaller: Marshaller[Throwable]) = {
+    implicit val marshaller = errorMarshaller
+    ExceptionHandler {
+      case e: IllegalRequestException => ctx =>
+        log.warn("Illegal request", e)
+        ctx.complete(e.status, e)
+      case e: RequestProcessingException => ctx =>
+        log.error("Failed to process request", e)
+        ctx.complete(e.status, e)
+      case NonFatal(e) => ctx =>
+        log.error("Unexpected error processing request", e)
+        ctx.complete(InternalServerError, e)
+    }
   }
 }
 

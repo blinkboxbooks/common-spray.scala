@@ -4,7 +4,7 @@ organization := "com.blinkbox.books"
 
 version := scala.util.Try(scala.io.Source.fromFile("VERSION").mkString.trim).getOrElse("0.0.0")
 
-crossScalaVersions := Seq("2.10.4", "2.11.2")
+crossScalaVersions := Seq("2.10.4", "2.11.4")
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8", "-target:jvm-1.7")
 
@@ -12,7 +12,7 @@ resolvers += "spray" at "http://repo.spray.io/"
 
 libraryDependencies ++= {
   val akkaV = "2.3.6"
-  val sprayV = "1.3.1"
+  val sprayV = "1.3.2"
   val metricsV = "3.0.2"
   Seq(
     "io.spray"              %%  "spray-can"             % sprayV,
@@ -26,8 +26,8 @@ libraryDependencies ++= {
     "com.blinkbox.books"    %%  "common-lang"           % "0.2.0",
     "com.blinkbox.books"    %%  "common-config"         % "1.4.1",
     "com.blinkbox.books"    %%  "common-json"           % "0.2.3",
-    "com.blinkbox.books"    %%  "common-scala-test"     % "0.3.0"   % "test",
-    "io.spray"              %%  "spray-testkit"         % sprayV    % "test",
-    "com.typesafe.akka"     %%  "akka-testkit"          % akkaV     % "test"
+    "com.blinkbox.books"    %%  "common-scala-test"     % "0.3.0"   % Test,
+    "io.spray"              %%  "spray-testkit"         % sprayV    % Test,
+    "com.typesafe.akka"     %%  "akka-testkit"          % akkaV     % Test
   )
 }
