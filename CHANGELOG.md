@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.20.0 ([#41](https://git.mobcastdev.com/Platform/common-spray/pull/41) 2014-11-19 11:49:08)
+
+Json error responses
+
+### Breaking Change
+
+- Added support for v2 API error messages in exception handler used by monitor directive. For example, `500 Internal Server Error` responses now contain JSON body:
+```json
+{"code":"InternalServerError","developerMessage":"There was an internal server error."}
+```
+
 ## 0.19.1 ([#39](https://git.mobcastdev.com/Platform/common-spray/pull/39) 2014-11-13 17:27:25)
 
 Monitoring directive logger fix
