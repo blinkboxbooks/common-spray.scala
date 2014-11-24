@@ -1,5 +1,23 @@
 # Change Log
 
+## 0.21.0 ([#42](https://git.mobcastdev.com/Platform/common-spray/pull/42) 2014-11-24 14:44:18)
+
+Changed logging to use scala-logging (again...)
+
+### Breaking Changes
+
+- Logging now uses the Typesafe scala-logging library rather than the
+SLF4J loggers. This _should_ work correctly this time…
+- Now only supports Scala 2.11 as the logging library does not work
+with 2.10
+
+### Notes
+
+- The json4s version is now 3.2.11 which adds a new method in
+`DefaultFormats`; if you have references to older versions then this
+can result in `AbstractMethodException` so make sure all your versions
+are consistent. `common-json` has already been updated.
+
 ## 0.20.0 ([#41](https://git.mobcastdev.com/Platform/common-spray/pull/41) 2014-11-19 11:49:08)
 
 Json error responses
