@@ -14,11 +14,11 @@ import spray.http.DateTime
 class UncacheableDirectiveTest extends FunSuite with ScalatestRouteTest {
 
   test("The neverCache directive sets non-cacheable headers") {
-    Get() ~> { neverCache { complete(OK) } } ~> check { checkNoCacheHeaders }
+    Get() ~> { neverCache { complete(OK) } } ~> check { checkNoCacheHeaders() }
   }
 
   test("The uncacheable directive sets non-cacheable headers") {
-    Get() ~> { uncacheable(OK) } ~> check { checkNoCacheHeaders }
+    Get() ~> { uncacheable(OK) } ~> check { checkNoCacheHeaders() }
   }
 
   test("The neverCache directive updates the Expires header dynamically") {
@@ -45,7 +45,7 @@ class UncacheableDirectiveTest extends FunSuite with ScalatestRouteTest {
     }
   }
 
-  def checkNoCacheHeaders {
+  def checkNoCacheHeaders(): Unit = {
     assert(header("Cache-Control").get.value == "no-store")
     assert(parseDateTime(header("Expires").get.value).get <= DateTime.now)
     assert(header("Pragma").get.value == "no-cache")

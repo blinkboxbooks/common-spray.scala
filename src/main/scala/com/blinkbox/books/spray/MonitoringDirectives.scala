@@ -1,7 +1,8 @@
 package com.blinkbox.books.spray
 
 import com.blinkbox.books.jar.JarManifest
-import org.slf4j.{Logger, MDC}
+import com.typesafe.scalalogging.Logger
+import org.slf4j.MDC
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
 import spray.http.{IllegalRequestException, RequestProcessingException}
@@ -18,7 +19,7 @@ trait MonitoringDirectives {
   import spray.routing.Directives._
 
   /**
-   * A magnet to bind to an SLF4J `Logger` and API version-specific Throwable marshaller using implicit conversions.
+   * A magnet to bind to a `Logger` and API version-specific Throwable marshaller using implicit conversions.
    *
    * It may not be obvious why we're using a regular `Logger` instead of the standard spray `LoggingContext`.
    * This is because we want to use MDC, and the MDC implementation in Akka logging (on which `LoggingContext`
@@ -63,8 +64,9 @@ trait MonitoringDirectives {
    * explicitly provide a logger.
    *
    * {{{
-   *  class MyHttpService extends HttpServiceActor with DiagnosticActorLogging {
-   *    implicit val log = LoggerFactory.getLogger(classOf[MyHttpService])
+   *  class MyHttpService extends HttpServiceActor with StrictLogging {
+   *    implicit val _ = logger
+   *    implicit val _ = // an error marshaller
    *
    *    def receive = runRoute {
    *      monitor() {
