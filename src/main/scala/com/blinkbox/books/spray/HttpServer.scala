@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.io.{Tcp, IO}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import spray.can.Http
 
 import scala.concurrent.ExecutionContext

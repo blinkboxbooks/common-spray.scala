@@ -1,5 +1,6 @@
 package com.blinkbox.books.spray.unmarshalling
 
+import akka.actor.ActorSystem
 import com.blinkbox.books.json.DefaultFormats
 import com.blinkbox.books.spray.Directives
 import org.joda.time.{DateTime, DateTimeZone}
@@ -26,7 +27,7 @@ trait TestService extends HttpService with Directives with Json4sJacksonSupport 
 
 @RunWith(classOf[JUnitRunner])
 class DeserializerTests extends FunSuite with ScalatestRouteTest with PartialFunctionValues with TestService {
-  override implicit def actorRefFactory = system
+  override implicit def actorRefFactory: ActorSystem = system
 
   test("deserialises BigDecimal from query parameter") {
     Get("/bigdecimal?amount=123.0001") ~> route ~> check {
