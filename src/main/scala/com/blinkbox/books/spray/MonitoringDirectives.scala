@@ -1,5 +1,7 @@
 package com.blinkbox.books.spray
 
+import java.util.concurrent.RejectedExecutionException
+
 import com.blinkbox.books.jar.JarManifest
 import com.typesafe.scalalogging.Logger
 import org.slf4j.MDC
@@ -129,6 +131,9 @@ trait MonitoringDirectives {
       case e: RequestProcessingException => ctx =>
         log.error("Failed to process request", e)
         ctx.complete(e.status, e)
+      case e: RejectedExecutionException => ctx =>
+        log.error("Service was too busy to process the request", e)
+        ctx.complete(ServiceUnavailable, e)
       case NonFatal(e) => ctx =>
         log.error("Unexpected error processing request", e)
         ctx.complete(InternalServerError, e)
