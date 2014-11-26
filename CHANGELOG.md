@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.22.1 ([#44](https://git.mobcastdev.com/Platform/common-spray/pull/44) 2014-11-26 18:02:35)
+
+Bumped versions
+
+### Improvements
+
+- Bumped versions
+
 ## 0.22.0 ([#43](https://git.mobcastdev.com/Platform/common-spray/pull/43) 2014-11-26 17:36:02)
 
 Returns right status for full thread pools
