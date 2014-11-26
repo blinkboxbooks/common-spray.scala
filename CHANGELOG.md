@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.22.0 ([#43](https://git.mobcastdev.com/Platform/common-spray/pull/43) 2014-11-26 17:36:02)
+
+Returns right status for full thread pools
+
+### New features
+
+- Now returns `503 Service Unavailable` if the service code throws a
+`RejectedExecutionException`, which occurs if an item cannot be added
+to a bounded thread pool.
+
 ## 0.21.0 ([#42](https://git.mobcastdev.com/Platform/common-spray/pull/42) 2014-11-24 14:44:18)
 
 Changed logging to use scala-logging (again...)
