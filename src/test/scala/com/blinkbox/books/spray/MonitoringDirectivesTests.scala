@@ -1,5 +1,6 @@
 package com.blinkbox.books.spray
 
+import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.atomic.AtomicReference
 
 import com.blinkbox.books.spray.v2.`application/vnd.blinkbox.books.v2+json`
@@ -250,6 +251,13 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
     Get("/path") ~> { monitor(log, marshaller) { failWith(new IllegalRequestException(BadRequest)) } } ~> check {
       assert(status == BadRequest)
       assert(entity.isEmpty)
+    }
+  }
+
+  test("MonitorExceptionHandler converts RejectedExecutionException into 503 Service Unavailable") {
+    implicit val log = Logger(mock[Slf4jLogger])
+    Get("/path") ~> { monitor() { failWith(new RejectedExecutionException) } } ~> check {
+      assert(status == ServiceUnavailable)
     }
   }
 }
