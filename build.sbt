@@ -21,8 +21,8 @@ lazy val root = (project in file(".")).
         "com.codahale.metrics"  %   "metrics-json"          % metricsV,
         "com.codahale.metrics"  %   "metrics-jvm"           % metricsV,
         "com.blinkbox.books"    %%  "common-lang"           % "0.2.1",
-        "com.blinkbox.books"    %%  "common-config"         % "2.0.1",
-        "com.blinkbox.books"    %%  "common-json"           % "0.2.4",
+        "com.blinkbox.books"    %%  "common-config"         % "2.1.0",
+        "com.blinkbox.books"    %%  "common-json"           % "0.2.5",
         "com.blinkbox.books"    %%  "common-scala-test"     % "0.3.0"   % Test,
         "io.spray"              %%  "spray-testkit"         % sprayV    % Test,
         "com.typesafe.akka"     %%  "akka-testkit"          % akkaV     % Test
