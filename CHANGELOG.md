@@ -1,5 +1,20 @@
 # Change Log
 
+## 0.22.2 ([#45](https://git.mobcastdev.com/Platform/common-spray/pull/45) 2014-11-27 11:54:11)
+
+Fixed a bug and updated metrics library
+
+### Bug fixes
+
+- The error body for `RejectedExecutionException` being thrown is now
+correctly reported as service unavailable rather than internal server
+error.
+
+### Improvements
+
+- Updated the version of the metrics library, and a couple of other
+shared libraries.
+
 ## 0.22.1 ([#44](https://git.mobcastdev.com/Platform/common-spray/pull/44) 2014-11-26 18:02:35)
 
 Bumped versions
