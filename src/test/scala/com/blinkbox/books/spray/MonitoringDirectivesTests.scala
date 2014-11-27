@@ -258,6 +258,8 @@ class MonitoringDirectivesTests extends FunSuite with ScalatestRouteTest with Mo
     implicit val log = Logger(mock[Slf4jLogger])
     Get("/path") ~> { monitor() { failWith(new RejectedExecutionException) } } ~> check {
       assert(status == ServiceUnavailable)
+      assert(mediaType == `application/vnd.blinkbox.books.v2+json`)
+      assert(body.asString == """{"code":"ServiceUnavailable","developerMessage":"The server is currently unavailable (because it is overloaded or down for maintenance)."}""")
     }
   }
 }

@@ -10,16 +10,16 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= {
       val akkaV = "2.3.7"
       val sprayV = "1.3.2"
-      val metricsV = "3.0.2"
+      val metricsV = "3.1.0"
       Seq(
         "io.spray"              %%  "spray-can"             % sprayV,
         "io.spray"              %%  "spray-routing"         % sprayV,
         "com.typesafe.akka"     %%  "akka-actor"            % akkaV,
         "com.typesafe.akka"     %%  "akka-slf4j"            % akkaV,
-        "com.codahale.metrics"  %   "metrics-core"          % metricsV,
-        "com.codahale.metrics"  %   "metrics-healthchecks"  % metricsV,
-        "com.codahale.metrics"  %   "metrics-json"          % metricsV,
-        "com.codahale.metrics"  %   "metrics-jvm"           % metricsV,
+        "io.dropwizard.metrics" %   "metrics-core"          % metricsV,
+        "io.dropwizard.metrics" %   "metrics-healthchecks"  % metricsV,
+        "io.dropwizard.metrics" %   "metrics-json"          % metricsV,
+        "io.dropwizard.metrics" %   "metrics-jvm"           % metricsV,
         "com.blinkbox.books"    %%  "common-lang"           % "0.2.1",
         "com.blinkbox.books"    %%  "common-config"         % "2.1.0",
         "com.blinkbox.books"    %%  "common-json"           % "0.2.5",
