@@ -17,6 +17,8 @@ trait Relation
 
 case class Link(rel: Relation, url: URI)
 
+case class Image(rel: Relation, url: URI)
+
 case class Error(code: String, developerMessage: Option[String])
 
 object Error {
