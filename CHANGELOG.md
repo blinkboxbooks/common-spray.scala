@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.23.0 ([#46](https://git.mobcastdev.com/Platform/common-spray/pull/46) 2014-12-01 10:57:11)
+
+v2 API Image representation
+
+### New feature
+
+- v2 API `Image` case class.
+
 ## 0.22.2 ([#45](https://git.mobcastdev.com/Platform/common-spray/pull/45) 2014-11-27 11:54:11)
 
 Fixed a bug and updated metrics library
