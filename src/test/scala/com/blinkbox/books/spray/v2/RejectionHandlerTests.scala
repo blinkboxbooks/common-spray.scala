@@ -15,7 +15,7 @@ import scala.xml.NodeSeq
 
 class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSupport {
 
-  val wrap = handleRejections(RejectionHandler.V2ErrorRejectionHandler)
+  val wrap = handleRejections(RejectionHandler.ErrorRejectionHandler)
   val completeOk = complete(HttpResponse())
 
   "Rejection Handler" should "respond with Error for requests resulting in Nil" in {

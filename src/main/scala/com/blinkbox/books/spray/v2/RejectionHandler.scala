@@ -11,8 +11,8 @@ import spray.routing.directives.RouteDirectives._
 
 object RejectionHandler extends v2.JsonSupport {
 
-  val V2ErrorRejectionHandler: SprayRejectionHandler = SprayRejectionHandler {
-    case Nil ⇒ complete(NotFound, Error(NotFound))
+  val ErrorRejectionHandler: SprayRejectionHandler = SprayRejectionHandler {
+    case Nil => complete(NotFound, Error(NotFound))
 
     case AuthenticationFailedRejection(cause, challengeHeaders) :: _ ⇒
       val rejectionMessage = cause match {
