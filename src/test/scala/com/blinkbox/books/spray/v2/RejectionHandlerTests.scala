@@ -67,7 +67,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
     import spray.httpx.marshalling.BasicMarshallers.FormDataMarshaller
     import spray.httpx.unmarshalling.FormDataUnmarshallers._
     Post("/", FormData(Map("amount" -> "12.2"))) ~> wrap {
-      formField('amount.as[Int]) { _ ⇒ completeOk }
+      formField('amount.as[Int]) { _ => completeOk }
     } ~> check {
       assert(status == BadRequest)
       assert(responseAs[Error] == Error("BadRequest", Some("The form field 'amount' was malformed:\n'12.2' is not a valid 32-bit integer value")))
@@ -76,7 +76,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
 
   it should "respond with BadRequest for requests resulting in a MalformedQueryParamRejection" in {
     Post("/?amount=xyz") ~> wrap {
-      parameters('amount.as[Int]) { _ ⇒ completeOk }
+      parameters('amount.as[Int]) { _ => completeOk }
     } ~> check {
       assert(status == BadRequest)
       assert(responseAs[Error] == Error("BadRequest", Some("The query parameter 'amount' was malformed:\n'xyz' is not a valid 32-bit integer value")))
@@ -86,7 +86,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
   it should "respond with BadRequest for requests resulting in MalformedRequestContentRejections" in {
     import org.scalatest.OptionValues._
     Post("/", HttpEntity(`text/xml`, "<broken>xmlbroken>")) ~> wrap {
-      extractEntity(as[NodeSeq]) { _ ⇒ completeOk }
+      extractEntity(as[NodeSeq]) { _ => completeOk }
     } ~> check {
       assert(status == BadRequest)
       val error = responseAs[Error]
@@ -98,8 +98,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
   it should "respond with MethodNotAllowed for requests resulting in MethodRejections" in {
     import spray.http.HttpMethods._
     Post("/", "/test") ~> wrap {
-      get { complete("yes") } ~
-        put { complete("yes") }
+      get { complete("yes") } ~ put { complete("yes") }
     } ~> check {
       assert(status == MethodNotAllowed)
       assert(headers == Allow(GET, PUT) :: Nil)
@@ -118,7 +117,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
 
   it should "respond with BadRequest for requests resulting in a MissingFormFieldRejection" in {
     Get() ~> wrap {
-      formFields('amount, 'orderId) { (_, _) ⇒ completeOk }
+      formFields('amount, 'orderId) { (_, _) => completeOk }
     } ~> check {
       assert(status == BadRequest)
       assert(responseAs[Error] == Error("BadRequest", Some("Request is missing required form field 'amount'")))
@@ -127,7 +126,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
 
   it should "respond with NotFound for requests resulting in a MissingQueryParamRejection" in {
     Get() ~> wrap {
-      parameters('amount, 'orderId) { (_, _) ⇒ completeOk }
+      parameters('amount, 'orderId) { (_, _) => completeOk }
     } ~> check {
       assert(status == NotFound)
       assert(responseAs[Error] == Error("NotFound", Some("Request is missing required query parameter 'amount'")))
@@ -137,7 +136,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
   it should "respond with BadRequest for requests resulting in RequestEntityExpectedRejection" in {
     implicit val x = Unmarshaller.forNonEmpty[String]
     Post() ~> wrap {
-      extractEntity(as[String]) { _ ⇒ completeOk }
+      extractEntity(as[String]) { _ => completeOk }
     } ~> check {
       assert(status == BadRequest)
       assert(responseAs[Error] == Error("BadRequest", Some("Request entity expected but not supplied")))
@@ -166,7 +165,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
   it should "respond with UnsupportedMediaType for requests resulting in UnsupportedRequestContentTypeRejection" in {
     implicit val x = spray.httpx.marshalling.BasicMarshallers.HttpEntityMarshaller
     Post("/", HttpEntity(`application/pdf`, "...PDF...")) ~> wrap {
-      extractEntity(as[NodeSeq]) { _ ⇒ completeOk }
+      extractEntity(as[NodeSeq]) { _ => completeOk }
     } ~> check {
       assert(status == UnsupportedMediaType)
       assert(responseAs[Error] == Error("UnsupportedMediaType", Some("There was a problem with the requests Content-Type:\n" +
