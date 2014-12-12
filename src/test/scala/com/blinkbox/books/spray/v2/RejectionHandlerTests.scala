@@ -1,6 +1,5 @@
 package com.blinkbox.books.spray.v2
 
-import com.blinkbox.books.spray.v2
 import org.scalatest.FlatSpec
 import spray.http.HttpHeaders._
 import spray.http.MediaTypes.{`application/pdf`, `text/css`, `text/xml`}
@@ -14,7 +13,7 @@ import spray.testkit.ScalatestRouteTest
 
 import scala.xml.NodeSeq
 
-class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with v2.JsonSupport {
+class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSupport {
 
   val wrap = handleRejections(RejectionHandler.V2ErrorRejectionHandler)
   val completeOk = complete(HttpResponse())
