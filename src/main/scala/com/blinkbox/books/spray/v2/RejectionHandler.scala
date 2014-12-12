@@ -1,6 +1,5 @@
 package com.blinkbox.books.spray.v2
 
-import com.blinkbox.books.spray.v2
 import spray.http.ContentRange
 import spray.http.HttpHeaders._
 import spray.http.StatusCodes._
@@ -9,7 +8,7 @@ import spray.routing._
 import spray.routing.{RejectionHandler => SprayRejectionHandler}
 import spray.routing.directives.RouteDirectives._
 
-object RejectionHandler extends v2.JsonSupport {
+object RejectionHandler extends JsonSupport {
 
   val ErrorRejectionHandler: SprayRejectionHandler = SprayRejectionHandler {
     case Nil => complete(NotFound, Error(NotFound))

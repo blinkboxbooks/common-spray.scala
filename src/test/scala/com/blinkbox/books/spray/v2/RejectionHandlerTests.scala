@@ -184,7 +184,7 @@ class RejectionHandlerTests extends FlatSpec with ScalatestRouteTest with JsonSu
 
   it should "respond with BadRequest for requests resulting in a ValidationRejection" in {
     Get() ~> wrap {
-      validate(false, "Oh noo!") { completeOk }
+      validate(check = false, "Oh noo!") { completeOk }
     } ~> check {
       assert(status == BadRequest)
       assert(responseAs[Error] == Error("BadRequest", Some("Oh noo!")))
