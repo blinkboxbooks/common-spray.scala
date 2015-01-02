@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.24.0 ([#47](https://git.mobcastdev.com/Platform/common-spray/pull/47) 2015-01-02 11:30:51)
+
+Default rejection handler
+
+### New Feature
+
+- `RejectionHandler` that converts Spray rejections into responses with JSON error messages
+
 ## 0.23.0 ([#46](https://git.mobcastdev.com/Platform/common-spray/pull/46) 2014-12-01 10:57:11)
 
 v2 API Image representation
